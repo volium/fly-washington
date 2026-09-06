@@ -1,5 +1,48 @@
 import { expect, test } from '@playwright/test';
 
+test('map background clears selection while markers and map navigation preserve it', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'Mobile details cover the map.');
+  await page.goto('/');
+  const map = page.locator('#map');
+  const skagit = page.locator('.leaflet-marker-icon[title^="KBVS "]');
+  const bellingham = page.locator('.leaflet-marker-icon[title^="KBLI "]');
+  await page.getByRole('combobox', { name: 'Region', exact: true }).selectOption('northwest');
+  await page.getByRole('button', { name: 'Show all matches' }).click();
+  await page.locator('[data-airport="KBVS"]').click();
+  await expect(skagit.locator('.is-selected')).toHaveCount(1);
+  await bellingham.locator('.passport-marker').click();
+  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
+  await expect(skagit.locator('.is-selected')).toHaveCount(0);
+  await expect(page.locator('#detail')).toBeVisible();
+  await page.getByRole('button', { name: 'Save check-in' }).click();
+  await expect(bellingham.locator('.is-visited')).toHaveCount(1);
+
+  await map.scrollIntoViewIfNeeded();
+  const bounds = (await map.boundingBox())!;
+  await page.mouse.move(bounds.x + 60, bounds.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x + 120, bounds.y + 160, { steps: 10 });
+  await page.mouse.up();
+  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Zoom in', exact: true }).click();
+  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
+  // Wait for Leaflet's pan/zoom animation before comparing the map position.
+  await expect(page.locator('.leaflet-zoom-anim, .leaflet-pan-anim')).toHaveCount(0);
+  const position = await bellingham.boundingBox();
+  const region = await bellingham.locator('.passport-marker').getAttribute('style');
+  await map.click({ position: { x: 30, y: 100 } });
+  await expect(page.locator('#detail')).toBeHidden();
+  await expect(page.locator('.passport-marker.is-selected')).toHaveCount(0);
+  await expect(page.locator('.airport-card[aria-pressed="true"]')).toHaveCount(0);
+  await expect(page.locator('.browse')).toBeVisible();
+  await expect(bellingham.locator('.is-visited')).toHaveCount(1);
+  await expect(bellingham.locator('.passport-marker')).toHaveAttribute('style', region!);
+  expect(await bellingham.boundingBox()).toEqual(position);
+  await expect(map).toBeFocused();
+  await map.click({ position: { x: 30, y: 100 } });
+  await expect(page.locator('#detail')).toBeHidden();
+});
+
 test('map, themes, filters, visits, persistence, and backup work on desktop and mobile', async ({ page }, testInfo) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();

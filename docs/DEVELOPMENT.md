@@ -16,6 +16,8 @@ After core checks pass, run `npm run core:pack` here. This builds/packs the sibl
 
 After repacking a core version while Vite is running, restart with `npm run dev -- --force` to refresh its dependency cache. Washington uses `map.markerDetailZoom: 9` for compact statewide markers; airport labels become persistent at closer zooms. Selected markers retain their labels.
 
+Map selection UX: clicking empty map space clears selection and closes details, keeping the map position/zoom and visited/region styling. Dragging and zooming preserve selection; clicking another marker switches airports. Mobile details cover the map and keep the existing All airports dismissal. The behavior lives in core; a desktop browser regression in this app covers these interactions.
+
 ## Maps, cost, and offline behavior
 
 Leaflet is BSD-2-Clause. The current basemap uses the public OpenStreetMap raster tile endpoint, without a paid subscription or key, and displays attribution. Its public service has limited donated capacity and no availability guarantee. Honor the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/): visible interactive tiles only, normal browser caching/referrer behavior, no bulk download, prefetch, or offline tile archives. Re-evaluate the configured provider if usage grows. Map provider URL and attribution live in program configuration.
@@ -56,6 +58,8 @@ The owner's spreadsheet was also inspected on 2026-09-06. Its 115 airport rows a
 Keep this document, core README/public contracts, and the plan's implementation status current as each milestone advances. Record checks actually run separately from checks merely configured in CI.
 
 ## Local validation — 2026-09-06
+
+Map deselection update: core lint, typecheck, six tests, and build pass; app lint, typecheck, data validation, seven program tests, and the production browser build pass. The new desktop interaction regression passes (mobile variants are skipped because details cover the map). Existing desktop/mobile workflows passed in the browser suite, with the previously documented expected Windows WebKit offline navigation failure retained.
 
 Full-data milestone: six core tests and five program/data tests pass, along with lint, typecheck, deterministic generation checks, and production build. The expanded browser suite has eight successful scenarios and the existing expected Windows WebKit offline failure (nine scenarios total). It covers 115 markers, seven regions, four seaplane entries, nineteen Olympic entries, real multiple stamp locations, backups, and offline behavior. The following initial-slice results are retained as historical context.
 
