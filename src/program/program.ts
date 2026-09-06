@@ -5,8 +5,8 @@ import { regions } from './regions';
 export const flyWashingtonProgram: PassportProgram = {
   id: 'fly-washington', name: 'Fly Washington Passport Program', shortName: 'Fly Washington',
   description: 'Explore Washington by air. Collect memories, one airport at a time.',
-  dataNotice: 'Development preview · 5 sample airports in 2 regions. Participation, region assignments, coordinates, and stamp locations are not verified. Progress is for this sample only; it does not establish eligibility for official awards. Not for flight planning.',
+  dataNotice: '115 program-map airports · 7 regions · Sources captured September 6, 2026. Airport reference positions and runways: OurAirports. Stamp directions: program map. Progress tracks this roster, not official award validation. Verify current airport conditions and stamp access before travel; not for flight planning.',
   branding: { accent: '#256b53', eyebrow: 'PASSPORT PROGRAM' },
-  map: { center: { latitude: 47.72, longitude: -122.7 }, zoom: 7, tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' },
+  map: { center: { latitude: 47.35, longitude: -120.7 }, zoom: 6, markerDetailZoom: 9, tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>' },
   regions, airports,
 };

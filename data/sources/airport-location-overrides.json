@@ -1,0 +1,20 @@
+[
+  {
+    "airportId": "S16",
+    "location": { "latitude": 47.144664, "longitude": -124.189073 },
+    "expectedMapLocation": { "latitude": 47.144664, "longitude": -124.189073 },
+    "expectedReferenceLocation": { "latitude": 47.124802, "longitude": -124.184998 },
+    "reviewedAt": "2026-09-06",
+    "reviewedBy": "Project owner",
+    "reason": "After manually reviewing Copalis, the owner chose to retain the original program map coordinates for the airport marker instead of the conflicting OurAirports position. This does not establish a stamp GPS target."
+  },
+  {
+    "airportId": "KS94",
+    "location": { "latitude": 46.8587, "longitude": -117.414001 },
+    "expectedMapLocation": { "latitude": 46.8754045, "longitude": -117.3627113 },
+    "expectedReferenceLocation": { "latitude": 46.8587, "longitude": -117.414001 },
+    "reviewedAt": "2026-09-06",
+    "reviewedBy": "Project owner",
+    "reason": "Owner confirmed that the OurAirports coordinates are the correct airport position for Port of Whitman (S94). Retain this position rather than the conflicting program map point. This does not establish a stamp GPS target."
+  }
+]

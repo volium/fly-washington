@@ -1,8 +1,8 @@
 # Fly Washington Passport Program
 
-A runnable first development slice of a responsive, local-first airport passport. Includes light/dark/system themes, a free map with no API key, airport browsing, local check-ins, notes/history, progress, and JSON backup/restore.
+A responsive, local-first airport passport with light/dark/system themes, a free map with no API key, airport browsing, local check-ins, notes/history, progress, and JSON backup/restore.
 
-**Development data:** five sample airports, two sample regions, and explicitly synthetic stamp-location examples. This is not the complete or verified official program and is not flight-planning information.
+**Full program roster:** all 115 entries from the September 6, 2026 official program-map snapshot, reconciled with OurAirports in seven regions. Includes stamp directions and 153 runway records. Source gaps and coordinate differences are documented in [DATA-SOURCES.md](docs/DATA-SOURCES.md). Progress tracks the roster; official award validation and dated eligibility rules are separate pending features. This is not flight-planning information.
 
 ## Run on desktop
 
@@ -36,6 +36,7 @@ Open `http://localhost:4173`, load once online, then use browser developer tools
 ```powershell
 npm run lint
 npm run typecheck
+npm run validate:data
 npm test
 npx playwright install chromium webkit
 npm run test:e2e

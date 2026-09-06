@@ -1,0 +1,692 @@
+[
+  {
+    "mapName": "Floathaven (0W7)",
+    "code": "0W7",
+    "airportId": "0W7",
+    "ourAirportsId": "7597"
+  },
+  {
+    "mapName": "Wiley Post Seaplane Base (W36)",
+    "code": "W36",
+    "airportId": "W36",
+    "ourAirportsId": "25581"
+  },
+  {
+    "mapName": "Poulsbo - Olympic Region (83Q)",
+    "code": "83Q",
+    "airportId": "83Q",
+    "ourAirportsId": "14620"
+  },
+  {
+    "mapName": "Kenmore Lake Washington (S60)",
+    "code": "S60",
+    "airportId": "S60",
+    "ourAirportsId": "24380"
+  },
+  {
+    "mapName": "DeLaurentis (Formerly A J Eisenberg) (OKH)",
+    "code": "OKH",
+    "airportId": "KOKH",
+    "ourAirportsId": "19035"
+  },
+  {
+    "mapName": "Anacortes (74S)",
+    "code": "74S",
+    "airportId": "K74S",
+    "ourAirportsId": "19030"
+  },
+  {
+    "mapName": "Arlington Municipal (AWO)",
+    "code": "AWO",
+    "airportId": "KAWO",
+    "ourAirportsId": "19334"
+  },
+  {
+    "mapName": "Auburn Municipal (S50)",
+    "code": "S50",
+    "airportId": "KS50",
+    "ourAirportsId": "21010"
+  },
+  {
+    "mapName": "Bellingham International (BLI)",
+    "code": "BLI",
+    "airportId": "KBLI",
+    "ourAirportsId": "3416"
+  },
+  {
+    "mapName": "Boeing Field (BFI)",
+    "code": "BFI",
+    "airportId": "KBFI",
+    "ourAirportsId": "3401"
+  },
+  {
+    "mapName": "Darrington Municipal (1S2)",
+    "code": "1S2",
+    "airportId": "1S2",
+    "ourAirportsId": "8640"
+  },
+  {
+    "mapName": "First Air Field (W16)",
+    "code": "W16",
+    "airportId": "W16",
+    "ourAirportsId": "25570"
+  },
+  {
+    "mapName": "Friday Harbor (FHR)",
+    "code": "FHR",
+    "airportId": "KFHR",
+    "ourAirportsId": "19868"
+  },
+  {
+    "mapName": "Harvey Field (S43)",
+    "code": "S43",
+    "airportId": "S43",
+    "ourAirportsId": "24376"
+  },
+  {
+    "mapName": "Lopez Island (S31)",
+    "code": "S31",
+    "airportId": "S31",
+    "ourAirportsId": "24373"
+  },
+  {
+    "mapName": "Lynden Municipal (38W)",
+    "code": "38W",
+    "airportId": "38W",
+    "ourAirportsId": "10308"
+  },
+  {
+    "mapName": "Mears Field (3W5)",
+    "code": "3W5",
+    "airportId": "3W5",
+    "ourAirportsId": "10859"
+  },
+  {
+    "mapName": "Crest Airfield (S36)",
+    "code": "S36",
+    "airportId": "KS36",
+    "ourAirportsId": "21003"
+  },
+  {
+    "mapName": "Paine Field (PAE)",
+    "code": "PAE",
+    "airportId": "KPAE",
+    "ourAirportsId": "3763"
+  },
+  {
+    "mapName": "Renton Municipal (RNT)",
+    "code": "RNT",
+    "airportId": "KRNT",
+    "ourAirportsId": "20947"
+  },
+  {
+    "mapName": "Seattle Tacoma International (SEA)",
+    "code": "SEA",
+    "airportId": "KSEA",
+    "ourAirportsId": "3875"
+  },
+  {
+    "mapName": "Whidbey Airpark (W10)",
+    "code": "W10",
+    "airportId": "W10",
+    "ourAirportsId": "25567"
+  },
+  {
+    "mapName": "Skagit Regional (BVS)",
+    "code": "BVS",
+    "airportId": "KBVS",
+    "ourAirportsId": "19420"
+  },
+  {
+    "mapName": "Bandera (4W0)",
+    "code": "4W0",
+    "airportId": "4W0",
+    "ourAirportsId": "11774"
+  },
+  {
+    "mapName": "Skykomish State (S88)",
+    "code": "S88",
+    "airportId": "S88",
+    "ourAirportsId": "24391"
+  },
+  {
+    "mapName": "Orcas Island Airport (ORS)",
+    "code": "ORS",
+    "airportId": "KORS",
+    "ourAirportsId": "23952"
+  },
+  {
+    "mapName": "Point Roberts (1RL)",
+    "code": "1RL",
+    "airportId": "1RL",
+    "ourAirportsId": "8638"
+  },
+  {
+    "mapName": "Vashon Municipal (2S1)",
+    "code": "2S1",
+    "airportId": "2S1",
+    "ourAirportsId": "9741"
+  },
+  {
+    "mapName": "Sekiu (11S)",
+    "code": "11S",
+    "airportId": "11S",
+    "ourAirportsId": "7738"
+  },
+  {
+    "mapName": "William R Fairchild Int'l (CLM)",
+    "code": "CLM",
+    "airportId": "KCLM",
+    "ourAirportsId": "3456"
+  },
+  {
+    "mapName": "Sequim Valley (W28)",
+    "code": "W28",
+    "airportId": "KW28",
+    "ourAirportsId": "21349"
+  },
+  {
+    "mapName": "Quillayute (UIL)",
+    "code": "UIL",
+    "airportId": "KUIL",
+    "ourAirportsId": "21290"
+  },
+  {
+    "mapName": "Forks Municipal (S18)",
+    "code": "S18",
+    "airportId": "S18",
+    "ourAirportsId": "24370"
+  },
+  {
+    "mapName": "Jefferson County Int'l (0S9)",
+    "code": "0S9",
+    "airportId": "K0S9",
+    "ourAirportsId": "18393"
+  },
+  {
+    "mapName": "Apex Airpark (8W5)",
+    "code": "8W5",
+    "airportId": "WA05",
+    "ourAirportsId": "25602"
+  },
+  {
+    "mapName": "Bremerton National (PWT)",
+    "code": "PWT",
+    "airportId": "KPWT",
+    "ourAirportsId": "3797"
+  },
+  {
+    "mapName": "Bowerman Field (HQM)",
+    "code": "HQM",
+    "airportId": "KHQM",
+    "ourAirportsId": "3590"
+  },
+  {
+    "mapName": "Westport (14S)",
+    "code": "14S",
+    "airportId": "14S",
+    "ourAirportsId": "7912"
+  },
+  {
+    "mapName": "Sanderson Field (SHN)",
+    "code": "SHN",
+    "airportId": "KSHN",
+    "ourAirportsId": "21068"
+  },
+  {
+    "mapName": "Olympia (OLM)",
+    "code": "OLM",
+    "airportId": "KOLM",
+    "ourAirportsId": "3749"
+  },
+  {
+    "mapName": "Tacoma Narrows (TIW)",
+    "code": "TIW",
+    "airportId": "KTIW",
+    "ourAirportsId": "3922"
+  },
+  {
+    "mapName": "Pierce County Thun Field (PLU)",
+    "code": "PLU",
+    "airportId": "KPLU",
+    "ourAirportsId": "24101"
+  },
+  {
+    "mapName": "Ranger Creek (21W)",
+    "code": "21W",
+    "airportId": "21W",
+    "ourAirportsId": "8869"
+  },
+  {
+    "mapName": "Swanson Field (2W3)",
+    "code": "2W3",
+    "airportId": "2W3",
+    "ourAirportsId": "9846"
+  },
+  {
+    "mapName": "Shady Acres (3B8)",
+    "code": "3B8",
+    "airportId": "3B8",
+    "ourAirportsId": "10400"
+  },
+  {
+    "mapName": "Copalis (S16)",
+    "code": "S16",
+    "airportId": "S16",
+    "ourAirportsId": "24369"
+  },
+  {
+    "mapName": "Ocean Shores Municipal (W04)",
+    "code": "W04",
+    "airportId": "W04",
+    "ourAirportsId": "25564"
+  },
+  {
+    "mapName": "Willapa Harbor (2S9)",
+    "code": "2S9",
+    "airportId": "K2S9",
+    "ourAirportsId": "18625"
+  },
+  {
+    "mapName": "Port of Ilwaco (7W1)",
+    "code": "7W1",
+    "airportId": "7W1",
+    "ourAirportsId": "14445"
+  },
+  {
+    "mapName": "Chehalis Centralia (CLS)",
+    "code": "CLS",
+    "airportId": "KCLS",
+    "ourAirportsId": "19515"
+  },
+  {
+    "mapName": "South Lewis County (TDO)",
+    "code": "TDO",
+    "airportId": "KTDO",
+    "ourAirportsId": "21183"
+  },
+  {
+    "mapName": "SW WA Regional Airport (KLS)",
+    "code": "KLS",
+    "airportId": "KKLS",
+    "ourAirportsId": "20277"
+  },
+  {
+    "mapName": "Grove Field (1W1)",
+    "code": "1W1",
+    "airportId": "1W1",
+    "ourAirportsId": "8724"
+  },
+  {
+    "mapName": "Goldendale (S20)",
+    "code": "S20",
+    "airportId": "KS20",
+    "ourAirportsId": "20993"
+  },
+  {
+    "mapName": "The Dalles Municipal (DLS)",
+    "code": "DLS",
+    "airportId": "KDLS",
+    "ourAirportsId": "19640"
+  },
+  {
+    "mapName": "Woodland (W27)",
+    "code": "W27",
+    "airportId": "W27",
+    "ourAirportsId": "25577"
+  },
+  {
+    "mapName": "Pearson Field (VUO)",
+    "code": "VUO",
+    "airportId": "KVUO",
+    "ourAirportsId": "21341"
+  },
+  {
+    "mapName": "Packwood (55S)",
+    "code": "55S",
+    "airportId": "55S",
+    "ourAirportsId": "12065"
+  },
+  {
+    "mapName": "Goheen Airport (W52)",
+    "code": "W52",
+    "airportId": "W52",
+    "ourAirportsId": "25588"
+  },
+  {
+    "mapName": "Morton/ Strom Field (39P)",
+    "code": "39P",
+    "airportId": "39P",
+    "ourAirportsId": "10344"
+  },
+  {
+    "mapName": "Ferry County (Republic) R49",
+    "code": "R49",
+    "airportId": "KR49",
+    "ourAirportsId": "20906"
+  },
+  {
+    "mapName": "Colville Municipal 63S",
+    "code": "63S",
+    "airportId": "63S",
+    "ourAirportsId": "12921"
+  },
+  {
+    "mapName": "Ione Municipal S23",
+    "code": "S23",
+    "airportId": "KS23",
+    "ourAirportsId": "20995"
+  },
+  {
+    "mapName": "Deer Park Municipal KDEW",
+    "code": "KDEW",
+    "airportId": "KDEW",
+    "ourAirportsId": "19624"
+  },
+  {
+    "mapName": "Felts Field - Spokane (KSFF)",
+    "code": "KSFF",
+    "airportId": "KSFF",
+    "ourAirportsId": "3877"
+  },
+  {
+    "mapName": "Geiger Field - Spokane International (KGEG)",
+    "code": "KGEG",
+    "airportId": "KGEG",
+    "ourAirportsId": "3552"
+  },
+  {
+    "mapName": "Wilbur Municipal 2S8",
+    "code": "2S8",
+    "airportId": "K2S8",
+    "ourAirportsId": "18624"
+  },
+  {
+    "mapName": "Davenport (68S)",
+    "code": "68S",
+    "airportId": "K68S",
+    "ourAirportsId": "18971"
+  },
+  {
+    "mapName": "Odessa Municipal 43D",
+    "code": "43D",
+    "airportId": "K43D",
+    "ourAirportsId": "18774"
+  },
+  {
+    "mapName": "Pru Field - Ritzville 33S",
+    "code": "33S",
+    "airportId": "K33S",
+    "ourAirportsId": "18645"
+  },
+  {
+    "mapName": "Rosalia Municipal 72S",
+    "code": "72S",
+    "airportId": "72S",
+    "ourAirportsId": "13744"
+  },
+  {
+    "mapName": "Lind Airport 0S0",
+    "code": "0S0",
+    "airportId": "K0S0",
+    "ourAirportsId": "18391"
+  },
+  {
+    "mapName": "Pullman-Moscow Regional Airport (KPUW)",
+    "code": "KPUW",
+    "airportId": "KPUW",
+    "ourAirportsId": "20883"
+  },
+  {
+    "mapName": "Little Goose State Airport (16W)",
+    "code": "16W",
+    "airportId": "16W",
+    "ourAirportsId": "8025"
+  },
+  {
+    "mapName": "Lower Granite State Airport (00W)",
+    "code": "00W",
+    "airportId": "00W",
+    "ourAirportsId": "6570"
+  },
+  {
+    "mapName": "Sullivan State Airport (09S)",
+    "code": "09S",
+    "airportId": "09S",
+    "ourAirportsId": "7051"
+  },
+  {
+    "mapName": "Sand Canyon - Chewelah Municipal 1S9",
+    "code": "1S9",
+    "airportId": "K1S9",
+    "ourAirportsId": "18515"
+  },
+  {
+    "mapName": "Port of Whitman (Colfax) S94",
+    "code": "S94",
+    "airportId": "KS94",
+    "ourAirportsId": "21027"
+  },
+  {
+    "mapName": "Mead Flying Service",
+    "code": "70S",
+    "airportId": "70S",
+    "ourAirportsId": "13668"
+  },
+  {
+    "mapName": "WIllard Field (73S)",
+    "code": "73S",
+    "airportId": "73S",
+    "ourAirportsId": "13785"
+  },
+  {
+    "mapName": "Dorothy Scott Municipal (Oroville) 0S7",
+    "code": "0S7",
+    "airportId": "K0S7",
+    "ourAirportsId": "18392"
+  },
+  {
+    "mapName": "Tonasket Municipal (W01)",
+    "code": "W01",
+    "airportId": "KW01",
+    "ourAirportsId": "21345"
+  },
+  {
+    "mapName": "Omak (KOMK)",
+    "code": "KOMK",
+    "airportId": "KOMK",
+    "ourAirportsId": "20746"
+  },
+  {
+    "mapName": "Methow Valley (Winthrop) S52",
+    "code": "S52",
+    "airportId": "KS52",
+    "ourAirportsId": "21011"
+  },
+  {
+    "mapName": "Lost Rver (Mazama) W12",
+    "code": "W12",
+    "airportId": "W12",
+    "ourAirportsId": "25568"
+  },
+  {
+    "mapName": "Twisp Municipal (2S0)",
+    "code": "2S0",
+    "airportId": "2S0",
+    "ourAirportsId": "9740"
+  },
+  {
+    "mapName": "Anderson Field (Brewster) S97",
+    "code": "S97",
+    "airportId": "KS97",
+    "ourAirportsId": "21029"
+  },
+  {
+    "mapName": "Mansfield (8W3)",
+    "code": "8W3",
+    "airportId": "8W3",
+    "ourAirportsId": "15236"
+  },
+  {
+    "mapName": "Waterville (2S5)",
+    "code": "2S5",
+    "airportId": "2S5",
+    "ourAirportsId": "9744"
+  },
+  {
+    "mapName": "Cashmere Dryden (8S2)",
+    "code": "8S2",
+    "airportId": "8S2",
+    "ourAirportsId": "15166"
+  },
+  {
+    "mapName": "Pangborn Memorial (Wenatchee) KEAT",
+    "code": "KEAT",
+    "airportId": "KEAT",
+    "ourAirportsId": "19717"
+  },
+  {
+    "mapName": "Ephrata Municipal (KEPH)",
+    "code": "KEPH",
+    "airportId": "KEPH",
+    "ourAirportsId": "19764"
+  },
+  {
+    "mapName": "Grant County International (Moses Lake) KMWH",
+    "code": "KMWH",
+    "airportId": "KMWH",
+    "ourAirportsId": "20581"
+  },
+  {
+    "mapName": "Quincy Municipal (80T)",
+    "code": "80T",
+    "airportId": "K80T",
+    "ourAirportsId": "19095"
+  },
+  {
+    "mapName": "Moses Lake Municipal (W20)",
+    "code": "W20",
+    "airportId": "W20",
+    "ourAirportsId": "25573"
+  },
+  {
+    "mapName": "Desert Aire (Mattawa) M94",
+    "code": "M94",
+    "airportId": "KM94",
+    "ourAirportsId": "20465"
+  },
+  {
+    "mapName": "Othello Municipal (S70)",
+    "code": "S70",
+    "airportId": "KS70",
+    "ourAirportsId": "21016"
+  },
+  {
+    "mapName": "Lake Wenatchee State Airport (27W)",
+    "code": "27W",
+    "airportId": "27W",
+    "ourAirportsId": "9181"
+  },
+  {
+    "mapName": "Stehekin State Airport (6S9)",
+    "code": "6S9",
+    "airportId": "6S9",
+    "ourAirportsId": "13530"
+  },
+  {
+    "mapName": "Grand Coulee Dam (3W7)",
+    "code": "3W7",
+    "airportId": "K3W7",
+    "ourAirportsId": "18750"
+  },
+  {
+    "mapName": "Lake Chelan Airport (S10)",
+    "code": "S10",
+    "airportId": "KS10",
+    "ourAirportsId": "20989"
+  },
+  {
+    "mapName": "Warden Airport (2S4)",
+    "code": "2S4",
+    "airportId": "K2S4",
+    "ourAirportsId": "18622"
+  },
+  {
+    "mapName": "Okanogan Legion S35",
+    "code": "S35",
+    "airportId": "S35",
+    "ourAirportsId": "24374"
+  },
+  {
+    "mapName": "Tri-Cities Airport (Pasco) KPSC",
+    "code": "KPSC",
+    "airportId": "KPSC",
+    "ourAirportsId": "20870"
+  },
+  {
+    "mapName": "Prosser S40",
+    "code": "S40",
+    "airportId": "KS40",
+    "ourAirportsId": "21005"
+  },
+  {
+    "mapName": "Richland",
+    "code": "RLD",
+    "airportId": "KRLD",
+    "ourAirportsId": "20939"
+  },
+  {
+    "mapName": "Walla Walla Regional KALW",
+    "code": "KALW",
+    "airportId": "KALW",
+    "ourAirportsId": "3376"
+  },
+  {
+    "mapName": "Martin Field (College Place) S95",
+    "code": "S95",
+    "airportId": "KS95",
+    "ourAirportsId": "21028"
+  },
+  {
+    "mapName": "Yakima YKM",
+    "code": "YKM",
+    "airportId": "KYKM",
+    "ourAirportsId": "3958"
+  },
+  {
+    "mapName": "Bowers Field Ellensburg (KELN)",
+    "code": "KELN",
+    "airportId": "KELN",
+    "ourAirportsId": "19752"
+  },
+  {
+    "mapName": "Lower Monumental (W09)",
+    "code": "W09",
+    "airportId": "W09",
+    "ourAirportsId": "25566"
+  },
+  {
+    "mapName": "Tieton State Airport (4S6)",
+    "code": "4S6",
+    "airportId": "4S6",
+    "ourAirportsId": "11705"
+  },
+  {
+    "mapName": "Sunnyside (1S5)",
+    "code": "1S5",
+    "airportId": "K1S5",
+    "ourAirportsId": "18514"
+  },
+  {
+    "mapName": "Cle Elum S93",
+    "code": "S93",
+    "airportId": "S93",
+    "ourAirportsId": "24395"
+  },
+  {
+    "mapName": "Easton (ESW)",
+    "code": "ESW",
+    "airportId": "KESW",
+    "ourAirportsId": "17182"
+  }
+]

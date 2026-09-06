@@ -8,19 +8,22 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src tests vite.config.ts playwright.config.ts",
+    "lint": "eslint src tests scripts vite.config.ts playwright.config.ts",
     "test": "vitest run tests/program",
-    "validate:data": "vitest run tests/program",
+    "data:generate": "node scripts/generate-data.mjs",
+    "validate:data": "node scripts/generate-data.mjs --check && vitest run tests/program",
     "test:e2e": "playwright test",
     "core:pack": "node scripts/pack-core.mjs"
   },
   "dependencies": {
-    "@passport/core": "file:vendor/passport-core-0.1.0.tgz"
+    "@passport/core": "file:vendor/passport-core-0.2.0.tgz"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.3.0",
+    "csv-parse": "7.0.2",
     "eslint": "^9.35.0",
+    "fast-xml-parser": "5.11.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.42.0",
     "vite": "^7.1.4",

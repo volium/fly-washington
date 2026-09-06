@@ -1,0 +1,9 @@
+[
+  { "id": "northwest", "name": "Northwest", "color": "#477a61" },
+  { "id": "olympic", "name": "Olympic", "color": "#7058a1" },
+  { "id": "southwest", "name": "Southwest", "color": "#986735" },
+  { "id": "eastern", "name": "Eastern", "color": "#ab4d4d" },
+  { "id": "north-central", "name": "North Central", "color": "#347d92" },
+  { "id": "south-central", "name": "South Central", "color": "#8b722a" },
+  { "id": "seaplane-bases", "name": "Seaplane Bases", "color": "#286cb0" }
+]

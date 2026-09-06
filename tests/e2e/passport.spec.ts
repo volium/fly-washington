@@ -3,7 +3,9 @@ import { expect, test } from '@playwright/test';
 test('map, themes, filters, visits, persistence, and backup work on desktop and mobile', async ({ page }, testInfo) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
-  await expect(page.locator('.passport-marker')).toHaveCount(5);
+  await expect(page.locator('.passport-marker')).toHaveCount(115);
+  await expect(page.locator('#map')).toHaveClass(/compact-markers/);
+  await expect(page.locator('.region-card')).toHaveCount(7);
   await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
@@ -11,6 +13,9 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByLabel('Appearance', { exact: true }).selectOption('light');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.getByRole('searchbox', { name: 'Search airports' }).fill('skagit');
+  await page.getByRole('button', { name: 'Show all matches' }).click();
+  await expect(page.locator('#map')).not.toHaveClass(/compact-markers/);
   await page.locator('.leaflet-marker-icon').filter({ has: page.locator('.passport-marker') }).first().click();
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'All airports' }).click();
@@ -20,7 +25,8 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await expect(page.locator('.passport-marker')).toHaveCount(1);
   await page.locator('.airport-card').click();
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
-  await expect(page.locator('.stamp')).toHaveCount(2);
+  await expect(page.locator('.stamp')).toHaveCount(1);
+  await expect(page.locator('.stamp')).toContainText('Port of Skagit');
   await page.getByLabel('Visit date').fill('2026-08-10');
   await page.getByLabel('Notes', { exact: false }).fill('First flight <script>safe text</script>');
   await page.getByRole('button', { name: 'Save check-in' }).click();
@@ -53,6 +59,21 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.screenshot({ path: testInfo.outputPath('passport-light.png'), fullPage: true });
   await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
   await page.screenshot({ path: testInfo.outputPath('passport-dark.png'), fullPage: true });
+});
+
+test('real regions filter both views and actual multiple stamp locations are available', async ({page},testInfo) => {
+  await page.goto('/');
+  if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button',{name:'List',exact:true}).click();
+  await page.getByRole('combobox',{name:'Region',exact:true}).selectOption('seaplane-bases');
+  await expect(page.locator('.airport-card')).toHaveCount(4);
+  await expect(page.locator('.passport-marker')).toHaveCount(4);
+  await page.getByRole('combobox',{name:'Region',exact:true}).selectOption('olympic');
+  await expect(page.locator('.airport-card')).toHaveCount(19);
+  await page.getByRole('searchbox',{name:'Search airports'}).fill('Bremerton');
+  await page.locator('.airport-card').click();
+  await expect(page.locator('.stamp')).toHaveCount(2);
+  await expect(page.locator('#detail')).toContainText('Avian Flight Center');
+  await expect(page.locator('#detail')).toContainText('Pilot lounge');
 });
 
 test('installed app shell opens and saves visits offline without caching map tiles', async ({ page, context, browserName }, testInfo) => {
