@@ -10,7 +10,7 @@ The first slice uses direct TypeScript/DOM components, Leaflet 1.9.4, IndexedDB 
 
 ## Package development
 
-`package.json` consumes `file:vendor/passport-core-0.3.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.3.0 adds configurable map styles and saved per-program preferences; 0.2.0 added optional identifiers, addresses, runways, cautions, and sources, plus alias search and reference-detail rendering. Storage and backups remain schema version 1.
+`package.json` consumes `file:vendor/passport-core-0.4.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.4.0 adds the viewport-height explorer and My passport panel; 0.3.0 added configurable map styles and saved per-program preferences; 0.2.0 added airport reference fields. Storage and backups remain schema version 1.
 
 After core checks pass, run `npm run core:pack` here. This builds/packs the sibling core and refreshes the app install/lockfile. Run the app checks and browser tests, then commit the archive and lockfile together. Increment the core version and app reference for future released changes. A registry release and automated dependency upgrades are later work.
 
@@ -38,6 +38,10 @@ Schema/backup version 1 is documented in the core README. Restore is validated a
 
 ## Desktop, mobile, PWA, and hosting
 
+The desktop explorer fills the viewport beneath a compact header. Persistent Explore / My passport tabs control the sidebar content while the full map, controls, and attribution remain visible. Airport browsing, details, and passport content scroll independently beneath the tabs. My passport contains regional progress, Export/Import, program description, and data/source notice. Switching tabs preserves airport selection and unfinished visit fields.
+
+On mobile, the same tabs sit beneath the header. My passport replaces the main content; Explore restores the Map/List choice, filters, and map position. My passport has no Close button or modal focus trap. Arrow keys and Home/End navigate the tabs. Only airport details use a full-screen modal, inert background controls, focus containment, and Escape dismissal. Short mobile viewports allow page scrolling. The desktop approach is owner-approved; physical mobile acceptance remains planned after deployment.
+
 See README for LAN testing. Plain HTTP on a phone does not enable service workers/PWA installation. Use HTTPS for full physical-device testing; an HTTPS GitHub Pages deployment is the intended first host. No deployment has been requested or performed.
 
 `npm run build` produces a static `dist/` folder. `BASE_PATH` configures subdirectory hosting; for this repository set `/fly-washington/`. The manifest uses relative identity/start/scope and PNG icons. The generated worker updates after the old app is closed; it does not force a reload while a visit form is being edited. Development mode intentionally has no service worker.
@@ -64,6 +68,8 @@ The owner's spreadsheet was also inspected on 2026-09-06. Its 115 airport rows a
 Keep this document, core README/public contracts, and the plan's implementation status current as each milestone advances. Record checks actually run separately from checks merely configured in CI.
 
 ## Local validation — 2026-09-06
+
+Tabbed explorer (core 0.4.0), approved on desktop: core lint/typecheck, seven tests, and build pass; app lint/typecheck, nine program tests, data validation, and the /fly-washington/ production build pass. Full browser suite: 26 passed, seven skipped (six desktop-only cases on mobile and the existing conditional WebKit offline reload exception). Coverage includes persistent tabs, keyboard navigation, independent scrolling, desktop map bounds, draft preservation, mobile Map/List and filter restoration, and Export/Import through My passport. Desktop/mobile screenshots were inspected. The versioned archive now contains the tabbed layout; physical mobile acceptance and a remote deployment of this revision remain pending.
 
 Deployment test adjustment: app lint/typecheck and the production test build pass. Targeted offline coverage reports five passed and one conditionally skipped: open-app offline save/persistence passes on desktop Chromium, mobile Chromium, and mobile WebKit; offline reload/save passes on both Chromium projects; WebKit hits the exact quarantined navigation error. The revised test has not yet been pushed or rerun in GitHub Actions. Historical expected-failure counts below describe earlier runs.
 
