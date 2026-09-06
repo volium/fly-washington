@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('map background clears selection while markers and map navigation preserve it', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Mobile details cover the map.');
@@ -136,5 +136,5 @@ test('installed app shell opens and saves visits offline without caching map til
   await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   const urls = await page.evaluate(async () => (await Promise.all((await caches.keys()).map(async key => (await (await caches.open(key)).keys()).map(request => request.url)))).flat());
-  expect(urls.some(url => url.includes('tile.openstreetmap.org'))).toBe(false);
+  expect(urls.some(url => url.includes('tile.openstreetmap.org') || url.includes('basemaps.cartocdn.com'))).toBe(false);
 });

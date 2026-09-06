@@ -10,7 +10,7 @@ The first slice uses direct TypeScript/DOM components, Leaflet 1.9.4, IndexedDB 
 
 ## Package development
 
-`package.json` consumes `file:vendor/passport-core-0.2.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.2.0 adds optional identifiers, addresses, runways, cautions, and sources, plus alias search and reference-detail rendering; storage and backups remain schema version 1.
+`package.json` consumes `file:vendor/passport-core-0.3.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.3.0 adds configurable map styles and saved per-program preferences; 0.2.0 added optional identifiers, addresses, runways, cautions, and sources, plus alias search and reference-detail rendering. Storage and backups remain schema version 1.
 
 After core checks pass, run `npm run core:pack` here. This builds/packs the sibling core and refreshes the app install/lockfile. Run the app checks and browser tests, then commit the archive and lockfile together. Increment the core version and app reference for future released changes. A registry release and automated dependency upgrades are later work.
 
@@ -20,13 +20,19 @@ Map selection UX: clicking empty map space clears selection and closes details, 
 
 ## Maps, cost, and offline behavior
 
+The map style selector offers OpenStreetMap (default) and CARTO when `VITE_CARTO_BASEMAPS_KEY` is configured. CARTO uses Positron in light mode and Dark Matter in dark mode, matching the [earlier app](https://github.com/volium/fwpp/blob/main/js/map.js). System appearance changes the native CARTO tiles automatically; no extra dark filter is applied to them. The selector remembers the choice on this browser for this program and preserves selection, map position/zoom, and unfinished visit forms. Provider URLs live in `src/program/map.ts`.
+
+Copy `.env.example` to `.env.local` and set `VITE_CARTO_BASEMAPS_KEY` to a dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), then restart Vite. `.env.local` is Git-ignored. This browser key is visible in built assets and tile requests; do not use a general workspace API token. For Pages builds, configure the GitHub Actions secret `CARTO_BASEMAPS_KEY`. No key means only OpenStreetMap is offered. Both providers' required attribution remains visible. CARTO's current documentation says raster basemaps are being retired; this change keeps Leaflet raster tiles to match the older app, with vector migration a future map-renderer change.
+
+Browser tests build into `dist-e2e` with a dummy key and intercept CARTO requests with test images. They test behavior, not real provider availability or visual cartography. Normal `npm run build` writes `dist` using local/CI configuration, and is the build intended for deployment. No developer key is needed for automated tests.
+
 Leaflet is BSD-2-Clause. The current basemap uses the public OpenStreetMap raster tile endpoint, without a paid subscription or key, and displays attribution. Its public service has limited donated capacity and no availability guarantee. Honor the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/): visible interactive tiles only, normal browser caching/referrer behavior, no bulk download, prefetch, or offline tile archives. Re-evaluate the configured provider if usage grows. Map provider URL and attribution live in program configuration.
 
-The app's service worker precaches only built app assets and the bundled airport data. It never caches OSM tile responses in Cache Storage. Browser HTTP caching follows the provider's headers. Offline mode still supports markers, list, filters, details, visits, and backup; a detailed offline basemap is not part of this milestone. Failed tiles produce an explanatory status. Dark mode dims the basemap separately from accessible markers and controls.
+The app's service worker precaches only built app assets and the bundled airport data. It never caches OSM or CARTO tile responses in Cache Storage. Browser HTTP caching follows the provider's headers. Offline mode still supports markers, list, filters, details, visits, and backup; a detailed offline basemap is not part of this milestone. Failed tiles produce an explanatory status. Dark mode dims OpenStreetMap separately from accessible markers and controls; CARTO uses native dark tiles.
 
 ## Storage and backup
 
-No accounts or backend. Visits live in IndexedDB on the current origin. Preferences use localStorage only for the theme; passport data does not. Browser data deletion can erase visits. Export JSON before clearing data or changing hosts. The UI supports date-only historical visits, repeat visits, notes, editing, and confirmation before deletion. All current visits are explicitly unverified.
+No accounts or backend. Visits live in IndexedDB on the current origin. Preferences use localStorage for appearance and the per-program map style; passport data does not. Browser data deletion can erase visits. Export JSON before clearing data or changing hosts. The UI supports date-only historical visits, repeat visits, notes, editing, and confirmation before deletion. All current visits are explicitly unverified.
 
 Schema/backup version 1 is documented in the core README. Restore is validated and add-only: matching IDs are skipped, existing records preserved, new records committed atomically. This is device transfer/backup, not synchronization. Attachments and ZIP archives are deferred.
 
@@ -58,6 +64,8 @@ The owner's spreadsheet was also inspected on 2026-09-06. Its 115 airport rows a
 Keep this document, core README/public contracts, and the plan's implementation status current as each milestone advances. Record checks actually run separately from checks merely configured in CI.
 
 ## Local validation — 2026-09-06
+
+Map-style update: core lint, typecheck, seven tests, and build pass. App lint, typecheck, nine program tests, data validation, and the `/fly-washington/` production build pass. Browser results: 19 successful scenarios, the existing expected Windows WebKit offline failure, and four desktop-only scenarios skipped on mobile (Playwright reports 20 passed, four skipped). New coverage exercises CARTO light/dark/system switching, persistence, attribution, unavailable/unknown preferences, and preserving selection and unfinished visits. Automated CARTO tiles are simulated. A separate live browser check with the owner-provided dedicated basemaps key loaded 15 tiles each for Positron and Dark Matter with HTTP 200 responses; screenshots showed both styles without an API-key watermark and with CARTO/OpenStreetMap attribution visible. The key is configured only in Git-ignored .env.local. The Windows test preview needed manual shutdown after the scenarios completed for the runner to exit.
 
 Map deselection update: core lint, typecheck, six tests, and build pass; app lint, typecheck, data validation, seven program tests, and the production browser build pass. The new desktop interaction regression passes (mobile variants are skipped because details cover the map). Existing desktop/mobile workflows passed in the browser suite, with the previously documented expected Windows WebKit offline navigation failure retained.
 

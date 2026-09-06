@@ -16,6 +16,8 @@ npm run dev
 
 Open `http://localhost:5173`. The core package is included as a pinned archive; a sibling checkout is not required to run the app.
 
+To enable CARTO as a map style option, copy `.env.example` to `.env.local`, set `VITE_CARTO_BASEMAPS_KEY` to your dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), and restart the server. CARTO follows Appearance with Positron (light) and Dark Matter (dark); the map choice is remembered on this device. Without a key, the app uses OpenStreetMap. See [map setup](docs/DEVELOPMENT.md#maps-cost-and-offline-behavior) for details. In PowerShell, use `npm.cmd` if script policy blocks `npm`.
+
 ## Test on your phone
 
 Keep the development server running and connect your phone to the same Wi-Fi as your PC. Find the PC's IPv4 address with `ipconfig`, then open `http://<PC-IP>:5173` on the phone. If Windows prompts, permit the development server on your private network. The dev command already listens on the network interface.
