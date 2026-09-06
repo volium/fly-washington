@@ -48,6 +48,12 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   await expect(page.locator('.passport-marker')).toHaveCount(115);
+  const skagitMarker = page.locator('.leaflet-marker-icon[title^="KBVS "]');
+  await expect(skagitMarker).toHaveAttribute('aria-label', /not visited$/);
+  expect(await skagitMarker.locator('.passport-marker').evaluate(marker => {
+    const style = getComputedStyle(marker);
+    return style.backgroundColor !== style.borderTopColor && marker.textContent === '';
+  })).toBe(true);
   await expect(page.locator('#map')).toHaveClass(/compact-markers/);
   await expect(page.locator('.region-card')).toHaveCount(7);
   await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
@@ -76,6 +82,11 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expect(page.locator('.passport-marker.is-visited')).toHaveCount(1);
+  await expect(skagitMarker).toHaveAttribute('aria-label', /, visited$/);
+  expect(await skagitMarker.locator('.passport-marker').evaluate(marker => {
+    const style = getComputedStyle(marker);
+    return style.backgroundColor === style.borderTopColor && marker.textContent === '';
+  })).toBe(true);
   await page.reload();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /KBVS.*Skagit Regional/ }).click();

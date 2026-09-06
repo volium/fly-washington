@@ -1,5 +1,33 @@
 import { expect, test } from './fixtures';
 
+test('initial map fits every airport to the available viewport', async ({ page }, testInfo) => {
+  const sizes = testInfo.project.name === 'desktop-chromium'
+    ? [{ width: 1440, height: 900 }, { width: 1000, height: 600 }]
+    : [page.viewportSize()!];
+  for (const size of sizes) {
+    await page.setViewportSize(size);
+    await page.goto('/');
+    await expect(page.locator('.passport-marker')).toHaveCount(115);
+    await expect.poll(() => page.locator('#map').evaluate(map => {
+      const bounds = map.getBoundingClientRect();
+      const markers = Array.from(map.querySelectorAll('.passport-marker')).map(marker => marker.getBoundingClientRect());
+      return markers.every(marker => marker.left >= bounds.left && marker.right <= bounds.right
+        && marker.top >= bounds.top && marker.bottom <= bounds.bottom);
+    })).toBe(true);
+    // The roster should occupy most of at least one axis, rather than remain zoomed out.
+    const coverage = await page.locator('#map').evaluate(map => {
+      const bounds = map.getBoundingClientRect();
+      const markers = Array.from(map.querySelectorAll('.passport-marker')).map(marker => marker.getBoundingClientRect());
+      return Math.max(
+        (Math.max(...markers.map(m => m.right)) - Math.min(...markers.map(m => m.left))) / bounds.width,
+        (Math.max(...markers.map(m => m.bottom)) - Math.min(...markers.map(m => m.top))) / bounds.height,
+      );
+    });
+    expect(coverage).toBeGreaterThan(0.5);
+    await page.screenshot({ path: testInfo.outputPath(`initial-map-${size.width}.png`) });
+  }
+});
+
 test('persistent tabs expose progress and backups and restore the explorer', async ({ page }, testInfo) => {
   await page.goto('/');
   const mobile = testInfo.project.name.startsWith('mobile');
