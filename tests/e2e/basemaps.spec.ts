@@ -35,7 +35,7 @@ test('changing appearance preserves map position, airport selection, and an unfi
   await page.locator('[data-airport="KBVS"]').click();
   await page.getByLabel('Notes', { exact: false }).fill('Still writing this visit');
   await expect(page.locator('.leaflet-zoom-anim, .leaflet-pan-anim')).toHaveCount(0);
-  const marker = page.locator('.leaflet-marker-icon[title^="KBVS "]');
+  const marker = page.locator('.leaflet-marker-icon[title^="BVS "]');
   const position = await marker.boundingBox();
   await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('dark');
   await expect(marker.locator('.is-selected')).toHaveCount(1);

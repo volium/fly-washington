@@ -5,8 +5,8 @@ test('map background clears selection while markers and map navigation preserve 
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Mobile details cover the map.');
   await page.goto('/');
   const map = page.locator('#map');
-  const skagit = page.locator('.leaflet-marker-icon[title^="KBVS "]');
-  const bellingham = page.locator('.leaflet-marker-icon[title^="KBLI "]');
+  const skagit = page.locator('.leaflet-marker-icon[title^="BVS "]');
+  const bellingham = page.locator('.leaflet-marker-icon[title^="BLI "]');
   await page.getByRole('combobox', { name: 'Region', exact: true }).selectOption('northwest');
   await page.getByRole('button', { name: 'Show all matches' }).click();
   await page.locator('[data-airport="KBVS"]').click();
@@ -48,7 +48,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   await expect(page.locator('.passport-marker')).toHaveCount(115);
-  const skagitMarker = page.locator('.leaflet-marker-icon[title^="KBVS "]');
+  const skagitMarker = page.locator('.leaflet-marker-icon[title^="BVS "]');
   await expect(skagitMarker).toHaveAttribute('aria-label', /not visited$/);
   expect(await skagitMarker.locator('.passport-marker').evaluate(marker => {
     const style = getComputedStyle(marker);
@@ -89,7 +89,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   })).toBe(true);
   await page.reload();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
-  await page.locator('#airport-list').getByRole('button', { name: /KBVS.*Skagit Regional/ }).click();
+  await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
   await expect(page.locator('.history')).toContainText('First flight <script>safe text</script>');
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await page.getByLabel('Notes', { exact: false }).fill('Updated visit');
@@ -102,7 +102,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   const download = await downloadEvent;
   const path = testInfo.outputPath('passport.json'); await download.saveAs(path);
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
-  await page.locator('#airport-list').getByRole('button', { name: /KBVS.*Skagit Regional/ }).click();
+  await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
   page.once('dialog', dialog => dialog.accept());
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page.locator('.history article')).toHaveCount(0);
@@ -158,14 +158,14 @@ test('an open app saves visits offline without caching map tiles', async ({ page
   await expect.poll(() => page.evaluate(() => navigator.onLine)).toBe(false);
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
-  await page.locator('#airport-list').getByRole('button', { name: /KORS.*Orcas Island/ }).click();
+  await page.locator('#airport-list').getByRole('button', { name: /ORS.*Orcas Island/ }).click();
   await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expectNoCachedMapTiles(page);
   await context.setOffline(false);
   await page.reload();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
-  await page.locator('#airport-list').getByRole('button', { name: /KORS.*Orcas Island/ }).click();
+  await page.locator('#airport-list').getByRole('button', { name: /ORS.*Orcas Island/ }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
 });
 
@@ -184,7 +184,7 @@ test('installed app shell reloads and saves visits offline', async ({ page, cont
   }
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
-  await page.locator('#airport-list').getByRole('button', { name: /KORS.*Orcas Island/ }).click();
+  await page.locator('#airport-list').getByRole('button', { name: /ORS.*Orcas Island/ }).click();
   await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expectNoCachedMapTiles(page);

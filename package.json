@@ -16,7 +16,7 @@
     "core:pack": "node scripts/pack-core.mjs"
   },
   "dependencies": {
-    "@passport/core": "file:vendor/passport-core-0.4.3.tgz"
+    "@passport/core": "file:vendor/passport-core-0.4.4.tgz"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

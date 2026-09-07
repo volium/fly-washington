@@ -83,7 +83,7 @@ test('desktop map stays fully visible while details scroll and passport preserve
   await page.locator('#detail').evaluate(element => { element.scrollTop = element.scrollHeight; });
   expect(await map.boundingBox()).toEqual(bounds);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  const marker = page.locator('.leaflet-marker-icon[title^="KBVS "]');
+  const marker = page.locator('.leaflet-marker-icon[title^="BVS "]');
   await expect(page.locator('.leaflet-pan-anim')).toHaveCount(0);
   const position = await marker.boundingBox();
   await page.getByRole('tab', { name: 'My passport', exact: true }).click();
