@@ -16,6 +16,8 @@ After core checks pass, run `npm run core:pack` here. This builds/packs the sibl
 
 After repacking a core version while Vite is running, restart with `npm run dev -- --force` to refresh its dependency cache. Washington uses `map.markerDetailZoom: 9` for compact statewide markers; airport labels become persistent at closer zooms. Selected markers retain their labels.
 
+The saved visit confirmation uses a muted version of the active green button styling in both themes; the button remains disabled during the four-second confirmation. After changing core styles, run `npm run core:pack` and restart Vite so the checked-in package and dependency cache use the updated stylesheet.
+
 Map selection UX: clicking empty map space clears selection and closes details, keeping the map position/zoom and visited/region styling. Dragging and zooming preserve selection; clicking another marker switches airports. Mobile details cover the map and keep the existing All airports dismissal. The behavior lives in core; a desktop browser regression in this app covers these interactions.
 
 ## Maps, cost, and offline behavior
