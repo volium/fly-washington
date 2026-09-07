@@ -18,7 +18,7 @@ Open `http://localhost:5173`. The core package is included as a pinned archive; 
 
 On desktop, the map stays fully visible while the sidebar scrolls. Use the persistent **Explore / My passport** tabs above the sidebar for airport browsing or regional progress and **Export/Import passport**. On mobile, the tabs sit beneath the header and switch the main content; Explore restores your previous Map/List view. Airport details remain a separate full-screen view on mobile.
 
-To enable CARTO as a map style option, copy `.env.example` to `.env.local`, set `VITE_CARTO_BASEMAPS_KEY` to your dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), and restart the server. CARTO follows Appearance with Positron (light) and Dark Matter (dark); the map choice is remembered on this device. Without a key, the app uses OpenStreetMap. See [map setup](docs/DEVELOPMENT.md#maps-cost-and-offline-behavior) for details. In PowerShell, use `npm.cmd` if script policy blocks `npm`.
+CARTO is the only basemap. To configure it, copy `.env.example` to `.env.local`, set `VITE_CARTO_BASEMAPS_KEY` to your dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), and restart the server. CARTO follows Appearance with Positron (light) and Dark Matter (dark); the appearance is remembered on this device. Configure a key for local and production tile requests. See [map setup](docs/DEVELOPMENT.md#maps-cost-and-offline-behavior) for details. In PowerShell, use `npm.cmd` if script policy blocks `npm`.
 
 ## Test on your phone
 
