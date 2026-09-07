@@ -67,6 +67,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByRole('button', { name: 'Show all matches' }).click();
   await expect(page.locator('#map')).not.toHaveClass(/compact-markers/);
   await page.locator('.leaflet-marker-icon').filter({ has: page.locator('.passport-marker') }).first().click();
+  if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'All airports' }).click();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
