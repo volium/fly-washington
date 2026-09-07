@@ -109,9 +109,9 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByRole('button', { name: 'All airports' }).click();
   await page.getByRole('tab', { name: 'My passport', exact: true }).click();
   await page.locator('#import').setInputFiles(path);
-  await expect(page.locator('#notice')).toContainText('Imported 1 visits');
+  await expect(page.locator('#passport-notice')).toContainText('Imported 1 visits');
   await page.locator('#import').setInputFiles(path);
-  await expect(page.locator('#notice')).toContainText('Imported 0 visits');
+  await expect(page.locator('#passport-notice')).toContainText('Imported 0 visits');
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
   await page.getByRole('combobox', { name: 'Passport', exact: true }).selectOption('visited');
   await expect(page.locator('.airport-card')).toHaveCount(1);
