@@ -39,7 +39,10 @@ jobs:
         with:
           path: dist
   deploy:
-    if: github.event_name == 'workflow_dispatch' && inputs.deploy && github.ref == 'refs/heads/main'
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'workflow_dispatch' && inputs.deploy))
     needs: checks
     runs-on: ubuntu-latest
     permissions:

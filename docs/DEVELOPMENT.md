@@ -46,7 +46,7 @@ See README for LAN testing. Plain HTTP on a phone does not enable service worker
 
 `npm run build` produces a static `dist/` folder. `BASE_PATH` configures subdirectory hosting; for this repository set `/fly-washington/`. The manifest uses relative identity/start/scope and PNG icons. The generated worker updates after the old app is closed; it does not force a reload while a visit form is being edited. Development mode intentionally has no service worker.
 
-The GitHub Actions workflow runs lint, types, data checks, tests, a production browser suite, and the Pages build. To deploy later, configure the repository's Pages source as GitHub Actions and manually dispatch the workflow on `main` with `deploy` selected. Deployment depends on passing checks. Remote CI has not been run from this workspace.
+The GitHub Actions workflow runs lint, types, data checks, tests, a production browser suite, and the Pages build. Successful pushes to `main` automatically deploy the tested build to GitHub Pages. Pull requests and pushes to other branches run checks without deploying. Manual deployment remains available by dispatching the workflow on `main` with `deploy` selected. The repository's Pages source must be GitHub Actions. Deployment depends on passing checks. Remote CI has not been run from this workspace.
 
 ## Remaining milestones
 
