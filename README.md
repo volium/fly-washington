@@ -11,6 +11,7 @@ Install Node.js 24 LTS (npm included), then:
 ```powershell
 cd C:\git\fly-washington
 npm ci
+npm run map:prepare
 npm run dev
 ```
 
@@ -18,7 +19,7 @@ Open `http://localhost:5173`. The core package is included as a pinned archive; 
 
 On desktop, the map stays fully visible while the sidebar scrolls. Use the persistent **Explore / My passport** tabs above the sidebar for airport browsing or regional progress and **Export/Import passport**. On mobile, the tabs sit beneath the header and switch the main content; Explore restores your previous Map/List view. Airport details remain a separate full-screen view on mobile.
 
-CARTO is the only basemap. To configure it, copy `.env.example` to `.env.local`, set `VITE_CARTO_BASEMAPS_KEY` to your dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), and restart the server. CARTO follows Appearance with Positron (light) and Dark Matter (dark); the appearance is remembered on this device. Configure a key for local and production tile requests. See [map setup](docs/DEVELOPMENT.md#maps-cost-and-offline-behavior) for details. In PowerShell, use `npm.cmd` if script policy blocks `npm`.
+The basemap uses self-hosted PMTiles with MapLibre and local light/dark styles. No map-provider key is required. Map preparation needs pinned go-pmtiles 1.31.2 or the retained archive URL; see [map generation, release, and acceptance](docs/OFFLINE-MAPS.md). In PowerShell, use `npm.cmd` if script policy blocks `npm`.
 
 ## Test on your phone
 
@@ -33,7 +34,7 @@ npm run build
 npm run preview
 ```
 
-Open `http://localhost:4173`, load once online, then use browser developer tools to go offline and reload. The airport list, markers, and visits remain available; basemap tiles may be absent. Data is per browser and origin; moving between dev, preview, phone, or Pages does not transfer visits. Use Export/Import passport to transfer a backup.
+Open `http://localhost:4173`, load once online, then use browser developer tools to go offline and reload. Use **My passport > Download map** while connected. After verification, the basemap, styles, sprites, glyphs, and attribution are available locally alongside airports and visits. Without that explicit download, the map may be unavailable offline. Data is per browser and origin; moving between dev, preview, phone, or Pages does not transfer visits. Use Export/Import passport to transfer a backup.
 
 ## Checks
 
@@ -46,6 +47,6 @@ npx playwright install chromium webkit
 npm run test:e2e
 ```
 
-Browser tests run desktop Chromium, Pixel-sized Chromium, and iPhone-sized WebKit. These are emulations; actual device testing remains necessary. Tests start their own production preview server and capture screenshots in `test-results/`.
+Browser tests run desktop Chromium, Pixel-sized Chromium, and iPhone-sized WebKit. These are emulations; actual device testing remains necessary. Tests use a production preview server (reusing an existing local preview when present; CI starts its own) and capture screenshots in `test-results/`.
 
 See [development and handoff notes](docs/DEVELOPMENT.md) for architecture, package updates, map terms, deployment, and next milestones. The shared architecture plan is in `../passport-core/Planning.md`.

@@ -7,10 +7,10 @@ test('FAA labels are consistent while internal and ICAO identifiers remain searc
     await page.getByRole('searchbox', { name: 'Search airports' }).fill(id);
     const card = page.locator(`[data-airport="${id}"]`);
     await expect(card.locator('.airport-code')).toHaveText(label);
-    await expect(page.locator(`.leaflet-marker-icon[title^="${label} "]`)).toHaveAttribute('aria-label', new RegExp(`^${label} `));
+    await expect(page.locator(`.airport-map-hit[title^="${label} "]`)).toHaveAttribute('aria-label', new RegExp(`^${label} `));
     await card.click();
     await expect(page.locator('#detail > .eyebrow')).toContainText(label);
-    await expect(page.locator('.leaflet-selectedAirportLabel-pane .airport-tooltip')).toHaveText([label]);
+    await expect(page.locator('.airport-map-hit.is-selected .airport-tooltip')).toHaveText([label]);
     await page.getByRole('button', { name: 'All airports' }).click();
   }
 });
@@ -20,17 +20,12 @@ test('selection raises both the marker and label above neighboring airports', as
   await page.goto('/');
   for (const [id, label] of [['KRNT', 'RNT'], ['W36', 'W36']]) {
     await page.locator(`[data-airport="${id}"]`).click();
-    const selected = page.locator('.leaflet-selectedAirport-pane .leaflet-marker-icon');
+    const selected = page.locator('.airport-map-hit.is-selected');
     await expect(selected).toHaveCount(1);
     await expect(selected).toHaveAttribute('title', new RegExp(`^${label} `));
-    await expect(page.locator('.leaflet-selectedAirportLabel-pane .airport-tooltip')).toHaveText([label]);
-    expect(await page.locator('#map').evaluate(map => {
-      const z = (selector: string) => Number(getComputedStyle(map.querySelector(selector)!).zIndex);
-      return z('.leaflet-selectedAirportLabel-pane') > z('.leaflet-selectedAirport-pane')
-        && z('.leaflet-selectedAirport-pane') > z('.leaflet-tooltip-pane')
-        && z('.leaflet-selectedAirport-pane') > z('.leaflet-marker-pane');
-    })).toBe(true);
+    await expect(page.locator('.airport-map-hit.is-selected .airport-tooltip')).toHaveText([label]);
+    await expect(selected).toHaveCSS('z-index', '2');
     await page.getByRole('button', { name: 'All airports' }).click();
-    await expect(page.locator('.leaflet-selectedAirport-pane .leaflet-marker-icon')).toHaveCount(0);
+    await expect(page.locator('.airport-map-hit.is-selected')).toHaveCount(0);
   }
 });

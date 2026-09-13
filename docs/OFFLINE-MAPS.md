@@ -1,0 +1,62 @@
+# Washington offline map — implementation and release record
+
+The working implementation uses core 0.5.0 with MapLibre GL JS and a program-owned Protomaps PMTiles package. It is not yet a deployed release. The package endpoint and physical Safari/Android acceptance remain release gates; publishing must not be inferred from local tests.
+
+## Measured candidates
+
+Source: `https://build.protomaps.com/20260912.pmtiles`, basemap schema/build 4.15.2, extracted using go-pmtiles 1.31.2. The source metadata and BLAKE3 identifier, exact commands, SHA-256 values, and CLI verification results are in [maps/candidates.json](../maps/candidates.json). The generation script is [map-candidates.mjs](../scripts/map-candidates.mjs).
+
+All five archives use minimum zoom 0 and bounds west −125.63, south 45.03, east −116.13, north 49.51. This expands Washington's bounding rectangle by approximately 35 miles, with longitude expansion calculated at its northern edge, covering coastal and border airports. This is uniform geographic/zoom extraction, without additional feature stripping. Hiding buildings/POIs in the style does not reduce archive bytes.
+
+| Maximum native zoom | Archive bytes | Required resource bytes | Total download bytes |
+| --- | ---: | ---: | ---: |
+| 9 | 9,237,767 | 11,230,824 | 20,468,591 |
+| 10 | 18,741,196 | 11,230,824 | 29,972,020 |
+| 11 | 36,902,403 | 11,230,824 | 48,133,227 |
+| 12 | 81,779,500 | 11,230,824 | 93,010,324 |
+| 13 | 191,831,101 | 11,230,824 | 203,061,925 |
+
+These are measured archive/resource bytes, not estimates of browser storage overhead. The candidate comparison uses the same supporting resources/style policy for each archive; metadata and manifest serialization are separate small overheads. The current z12 manifest is [washington-z12.json](../src/program/maps/washington-z12.json).
+
+**Implementation candidate: z12.** The comparison starts at the statewide view and overzooms to 13.5 at Copalis/coast (S16), Orcas/border islands (KORS), Renton/urban (KRNT), Omak/rural (KOMK), Methow/mountains (KS52), and Lake Union/seaplane (W55), with program airports drawn independently. At Renton, z11 preserves major connections but omits much of the finer surrounding street and neighborhood context visible at z12. Z9/z10 are substantially generalized when overzoomed. Z13 adds detail with an archive more than twice z12's size. Z12 is the current quality/size candidate, subject to the remaining acceptance gates rather than a claim of universal optimum. Final physical-device review may still reject it.
+
+`scripts/map-compare.mjs` reproduces screenshots and rendering-wait measurements using an explicitly supplied core harness URL, plus the app's own candidate archives and airport data. Output is in ignored `map-work/comparison/`. Chromium uses a mobile viewport with software rendering on this workstation: these timings/JS heap samples are diagnostic observations, not actual phone performance or a total-memory/peak-memory measurement.
+
+## Complete local resources and ownership
+
+The z12 archive is accompanied by 782 resources: light/dark style JSON, light/dark sprites at both densities with indexes, all 256 glyph ranges for each of Noto Sans Regular/Medium/Italic, and license/attribution notices. The glyph assets are pinned to basemaps-assets commit `028c18f713baecad011301ff7a69acc39bcc2ae7`, with Git blob hashes in [maps/assets.json](../maps/assets.json). Generation verifies upstream hashes and records SHA-256/bytes for every deployed resource. Styles use explicit bundled font stacks; no glyph CDN, hosted style, or remote sprite is required offline. MapLibre's worker is supplied by core and precached with the small application shell.
+
+Core owns rendering, markers, lifecycle/status UI, storage, verification, rollback, and default styling. Washington owns the archive, coverage/detail policy, manifest, release process, airport/stamp data, region colors, and optional style overrides. Airport records and visits are not baked into tiles. A program-data update does not require rebuilding the basemap.
+
+Map data attribution is OpenStreetMap/ODbL with Protomaps credit. Fonts use SIL OFL; sprites derive from MIT-licensed Mapzen icons; default style code uses BSD-3-Clause. Notices travel in the verified package, and map attribution remains visible offline. Primary sources: [Protomaps assets and licenses](https://github.com/protomaps/basemaps-assets/tree/028c18f713baecad011301ff7a69acc39bcc2ae7), [sprite license](https://github.com/tangrams/icons/blob/master/LICENSE.md), [style licenses](https://github.com/protomaps/basemaps/blob/main/LICENSE.md), and [OpenStreetMap copyright](https://www.openstreetmap.org/copyright).
+
+## Preparation, retention, and release
+
+1. Install dependencies with `npm ci`. App CI consumes the checked-in core tarball without a sibling checkout.
+2. Set `PMTILES_CLI` to go-pmtiles 1.31.2, then run `npm run map:prepare`. If the chosen archive is absent, this generates the pinned candidates and verifies the selected hash, then builds all resources. Alternatively set `MAP_ARCHIVE_URL` to the retained, immutable z12 `.pmtiles` file; it must match the committed SHA-256 and byte count. CI installs the pinned Linux tool with a verified release checksum and caches generated archives.
+3. Run `npm run map:verify`, application checks, and browser tests. `npm run build` refuses missing/corrupt assets. Preparation verifies that generated metadata matches the committed release; changing any resource requires an explicit new map version. Development generation may use `node scripts/map-resources.mjs` to create a new manifest before publishing an immutable version.
+4. Preserve `public/maps/20260912-z12/` as a complete immutable release artifact, including its manifest. CI uploads that directory with 90-day retention. **Before production promotion, retain the archive in a durable static/release location and configure the repository's `MAP_ARCHIVE_URL` variable.** A CI cache or expiring artifact is not a permanent source archive; Protomaps daily-build retention is not guaranteed. Large generated files are ignored by Git. Keep the preceding release for rollback.
+5. Build with `BASE_PATH=/fly-washington/` for Pages, publish the complete tested `dist/`, and run `MAP_SITE_URL=https://volium.github.io/fly-washington/ npm run map:host-check` (set environment variables using the local shell's syntax). Do not publish a program manifest pointing to missing resources.
+
+Map versions are independent of airport data and core versions. Roll back the program's advertised manifest to a retained immutable map release when needed; installed clients can also restore their retained previous generation through My passport. Never replace bytes at a published version's URLs. The generation script currently pins the first source/version deliberately; a new release changes those constants and records a new experiment/manifest explicitly.
+
+## Offline behavior and space
+
+Load the production app online to install its shell, then choose **My passport > Download map**. The application reports shell restart readiness, program/passport storage, and map availability separately. With the complete package verified, closing and opening the app offline retains the map and labels. Without a downloaded package, airports and passport remain usable but a basemap is not promised. Appearance switching and unfinished visit fields are preserved.
+
+The archive and resources use core's separate chunked IndexedDB database, not Workbox tile caching. The service worker excludes `maps/**` and has no runtime tile cache. Core requests persistence, estimates quota, hashes the streamed download, rejects incomplete/corrupt resources, stages updates without replacing the active map, and retains one rollback generation. Cancellation discards staging; retry starts a complete transfer. Deletion affects map data only. Startup/foreground checks verify actual stored bytes and report eviction or corruption.
+
+Z12 payloads alone require about 93.01 MB for one complete package or 186.02 MB for an old/new pair; a further update with a retained rollback can temporarily hold three generations. Browser database, manifest, and shell overhead are additional. Core's estimate reserves the incoming package plus 15% and 2 MiB beyond current origin usage, then handles actual write/quota failures. These budgets are not a claim about guaranteed browser quota or persistence. See [browser storage behavior](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria).
+
+## Evidence and remaining gates
+
+- Local validation on 2026-09-12: core lint/typecheck/build, 16 unit tests, and five independent browser tests passed; app lint/typecheck/build, data reconciliation, and eight program tests passed. The full 54-case application browser run reported 43 passed and 11 skips (nine viewport-specific exclusions and two narrowly identified WebKit cold-navigation exceptions). Responsive outlines and missing secure-context APIs have independent browser coverage.
+- CLI verification passed for all five real archives. Program validation checks every airport against the declared coverage. Standalone core tests require no Washington checkout or package.
+- A real-archive failed-update experiment passed in Chromium: after installing the complete package, a replacement streamed the 81,779,500-byte archive with an intentionally incorrect expected hash. The installed archive remained readable after more than 70 MB had staged; rejection retained the original generation, which then passed full verification again. Browser-reported IndexedDB usage was 89,767,936 bytes before, 160,120,832 during the sampled staging interval, and 89,772,032 after cleanup. These estimates are not peak memory or guaranteed quota. Raw results are in [failed-update-experiment.json](../maps/failed-update-experiment.json); quota-denial paths also have synthetic core coverage.
+- Desktop and mobile Chromium complete-package tests pass: download, verification, a new offline tab after closing the original page, local dark-style rendering with labels and **zero map-resource network requests**, absence of map files in Cache Storage, and map deletion preserving visits. Screenshots were inspected. Browser tests attach observed download duration and storage estimates; these local-server timings are not real network/download predictions.
+- Automated WebKit installs the complete package and switches to the dark map offline with zero map-resource requests. Local sprite decoding uses MapLibre's supported image protocol to avoid a separate Blob decoding failure. Cold offline navigation still reports `WebKit encountered an internal error`, the pre-existing narrowly identified navigation limitation. The test preserves its specific conditional exception only after open-app rendering succeeds; other errors and assertions fail normally. This does not establish physical Safari support or identify the navigation failure's underlying cause.
+- The local production build also passes cold offline startup at `/fly-washington/`, with all 115 markers and dark styling, zero map-resource requests, and an inspected screenshot. The local host check verifies HTTP Range plus the sizes/hashes of all 782 resources. These subpath checks do not substitute for the published endpoint.
+- A live read-only Pages probe on 2026-09-12 returned `206 bytes 0-126/273` for the existing icon. The **new package endpoint returned 404** because this revision has not been deployed. Actual archive Range/header/style checks remain required after publication; local Vite Range responses are not a substitute. [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) and [Protomaps deployment guidance](https://docs.protomaps.com/deploy/) inform the static-host requirement.
+- Physical iPhone/Safari and Android acceptance remains open: cold startup in airplane mode, panning/overzoom and labels at representative airports, actual memory/storage pressure, denied persistence, interrupted/update downloads with old/new coexistence, restart after eviction, accessibility, and retained visit/draft behavior. Do not label these unperformed tests as passed or remove them from the release gate.
+
+No backend, tile server, CARTO dependency, MBTiles solution, or bulk public OpenStreetMap tile download is part of this implementation. No commit, push, release upload, or deployment was performed during local implementation.

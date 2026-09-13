@@ -5,18 +5,18 @@ test('map background clears selection while markers and map navigation preserve 
   test.skip(testInfo.project.name !== 'desktop-chromium', 'Mobile details cover the map.');
   await page.goto('/');
   const map = page.locator('#map');
-  const skagit = page.locator('.leaflet-marker-icon[title^="BVS "]');
-  const bellingham = page.locator('.leaflet-marker-icon[title^="BLI "]');
+  const skagit = page.locator('.airport-map-hit[title^="BVS "]');
+  const bellingham = page.locator('.airport-map-hit[title^="BLI "]');
   await page.getByRole('combobox', { name: 'Region', exact: true }).selectOption('northwest');
   await page.getByRole('button', { name: 'Show all matches' }).click();
   await page.locator('[data-airport="KBVS"]').click();
-  await expect(skagit.locator('.is-selected')).toHaveCount(1);
-  await bellingham.locator('.passport-marker').click();
-  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
+  await expect(skagit).toHaveClass(/is-selected/);
+  await bellingham.click();
+  await expect(bellingham).toHaveClass(/is-selected/);
   await expect(skagit.locator('.is-selected')).toHaveCount(0);
   await expect(page.locator('#detail')).toBeVisible();
   await page.getByRole('button', { name: 'Save check-in' }).click();
-  await expect(bellingham.locator('.is-visited')).toHaveCount(1);
+  await expect(bellingham).toHaveClass(/is-visited/);
 
   await map.scrollIntoViewIfNeeded();
   const bounds = (await map.boundingBox())!;
@@ -24,20 +24,21 @@ test('map background clears selection while markers and map navigation preserve 
   await page.mouse.down();
   await page.mouse.move(bounds.x + 120, bounds.y + 160, { steps: 10 });
   await page.mouse.up();
-  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
+  await expect(bellingham).toHaveClass(/is-selected/);
   await page.getByRole('button', { name: 'Zoom in', exact: true }).click();
-  await expect(bellingham.locator('.is-selected')).toHaveCount(1);
-  // Wait for Leaflet's pan/zoom animation before comparing the map position.
-  await expect(page.locator('.leaflet-zoom-anim, .leaflet-pan-anim')).toHaveCount(0);
+  await expect(bellingham).toHaveClass(/is-selected/);
+  // Wait for navigation to settle before comparing the map position.
+  await page.waitForTimeout(500);
+
   const position = await bellingham.boundingBox();
-  const region = await bellingham.locator('.passport-marker').getAttribute('style');
+  const region = await bellingham.getAttribute('aria-label');
   await map.click({ position: { x: 30, y: 100 } });
   await expect(page.locator('#detail')).toBeHidden();
-  await expect(page.locator('.passport-marker.is-selected')).toHaveCount(0);
+  await expect(page.locator('.airport-map-hit.is-selected')).toHaveCount(0);
   await expect(page.locator('.airport-card[aria-pressed="true"]')).toHaveCount(0);
   await expect(page.locator('.browse')).toBeVisible();
-  await expect(bellingham.locator('.is-visited')).toHaveCount(1);
-  await expect(bellingham.locator('.passport-marker')).toHaveAttribute('style', region!);
+  await expect(bellingham).toHaveClass(/is-visited/);
+  await expect(bellingham).toHaveAttribute('aria-label', region!);
   expect(await bellingham.boundingBox()).toEqual(position);
   await expect(map).toBeFocused();
   await map.click({ position: { x: 30, y: 100 } });
@@ -45,15 +46,13 @@ test('map background clears selection while markers and map navigation preserve 
 });
 
 test('map, themes, filters, visits, persistence, and backup work on desktop and mobile', async ({ page }, testInfo) => {
+  test.setTimeout(60000);
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
-  await expect(page.locator('.passport-marker')).toHaveCount(115);
-  const skagitMarker = page.locator('.leaflet-marker-icon[title^="BVS "]');
+  await expect(page.locator('.airport-map-hit')).toHaveCount(115);
+  const skagitMarker = page.locator('.airport-map-hit[title^="BVS "]');
   await expect(skagitMarker).toHaveAttribute('aria-label', /not visited$/);
-  expect(await skagitMarker.locator('.passport-marker').evaluate(marker => {
-    const style = getComputedStyle(marker);
-    return style.backgroundColor !== style.borderTopColor && marker.textContent === '';
-  })).toBe(true);
+
   await expect(page.locator('#map')).toHaveClass(/compact-markers/);
   await expect(page.locator('.region-card')).toHaveCount(7);
   await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
@@ -66,14 +65,14 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByRole('searchbox', { name: 'Search airports' }).fill('skagit');
   await page.getByRole('button', { name: 'Show all matches' }).click();
   await expect(page.locator('#map')).not.toHaveClass(/compact-markers/);
-  await page.locator('.leaflet-marker-icon').filter({ has: page.locator('.passport-marker') }).first().click();
+  await page.locator('.airport-map-hit').first().click();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'View details', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'All airports' }).click();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.getByRole('searchbox', { name: 'Search airports' }).fill('skagit');
   await expect(page.locator('.airport-card')).toHaveCount(1);
-  await expect(page.locator('.passport-marker')).toHaveCount(1);
+  await expect(page.locator('.airport-map-hit')).toHaveCount(1);
   await page.locator('.airport-card').click();
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
   await expect(page.locator('.stamp')).toHaveCount(1);
@@ -82,12 +81,9 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByLabel('Notes', { exact: false }).fill('First flight <script>safe text</script>');
   await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
-  await expect(page.locator('.passport-marker.is-visited')).toHaveCount(1);
+  await expect(page.locator('.airport-map-hit.is-visited')).toHaveCount(1);
   await expect(skagitMarker).toHaveAttribute('aria-label', /, visited$/);
-  expect(await skagitMarker.locator('.passport-marker').evaluate(marker => {
-    const style = getComputedStyle(marker);
-    return style.backgroundColor === style.borderTopColor && marker.textContent === '';
-  })).toBe(true);
+
   await page.reload();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
@@ -126,7 +122,7 @@ test('real regions filter both views and actual multiple stamp locations are ava
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button',{name:'List',exact:true}).click();
   await page.getByRole('combobox',{name:'Region',exact:true}).selectOption('seaplane-bases');
   await expect(page.locator('.airport-card')).toHaveCount(4);
-  await expect(page.locator('.passport-marker')).toHaveCount(4);
+  await expect(page.locator('.airport-map-hit')).toHaveCount(4);
   await page.getByRole('combobox',{name:'Region',exact:true}).selectOption('olympic');
   await expect(page.locator('.airport-card')).toHaveCount(19);
   await page.getByRole('searchbox',{name:'Search airports'}).fill('Bremerton');

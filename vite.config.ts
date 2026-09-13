@@ -14,8 +14,10 @@ export default defineConfig({
       icons: [{ src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' }],
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
-      // Public OSM tiles must never be prefetched or placed in an offline cache.
+      globPatterns: ['**/*.{js,css,html,svg,png,webmanifest,txt}'],
+      // Large maps use core's explicit verified IndexedDB lifecycle.
+      globIgnores: ['maps/**'],
+      maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       runtimeCaching: [],
       cleanupOutdatedCaches: true,
     },

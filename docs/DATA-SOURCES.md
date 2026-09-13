@@ -2,7 +2,7 @@
 
 ## Google My Map — inspected 2026-09-06
 
-The project owner supplied [this Google My Map](https://www.google.com/maps/d/viewer?mid=1AnHLrRdeYV6TR6qCFDnM4bcp2kSe45j-) as the official program data source. Its public KML export is accessible without an account. An unmodified, dated copy is preserved in `data/sources/`; no live Google Maps SDK or API key is necessary to display derived program data on the existing Leaflet map.
+The project owner supplied [this Google My Map](https://www.google.com/maps/d/viewer?mid=1AnHLrRdeYV6TR6qCFDnM4bcp2kSe45j-) as the official program data source. Its public KML export is accessible without an account. An unmodified, dated copy is preserved in `data/sources/`; no live Google Maps SDK or API key is necessary to display derived program data on the map.
 
 The export contains 115 placemarks with point geometries and no duplicate display names. All 115 now map uniquely to airport records in OurAirports through an explicit crosswalk. This is the complete captured map roster; dated award eligibility is a separate calculation.
 
@@ -91,3 +91,7 @@ To refresh sources deliberately:
 5. Run lint, typecheck, data validation, build, and desktop/mobile browser tests. Update the source notice, dataset expectations, and handoff notes with verified counts and dates.
 
 Remaining work is the award engine described in [AWARDS.md](AWARDS.md), optional amenities enrichment, precise GPS targets, media, and personal history import. The complete captured airport roster itself is integrated.
+
+## Basemap provenance
+
+The program basemap is separate from airport/stamp/visit data. See [OFFLINE-MAPS.md](OFFLINE-MAPS.md) and `maps/candidates.json` for the pinned Protomaps/OSM source, exact Washington coverage, measured candidates, licenses, and release process.

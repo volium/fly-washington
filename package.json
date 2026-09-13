@@ -13,10 +13,15 @@
     "data:generate": "node scripts/generate-data.mjs",
     "validate:data": "node scripts/generate-data.mjs --check && vitest run tests/program",
     "test:e2e": "playwright test",
-    "core:pack": "node scripts/pack-core.mjs"
+    "core:pack": "node scripts/pack-core.mjs",
+    "map:prepare": "node scripts/map-prepare.mjs",
+    "map:verify": "node scripts/map-verify.mjs",
+    "map:host-check": "node scripts/map-host-check.mjs",
+    "map:candidates": "node scripts/map-candidates.mjs",
+    "prebuild": "npm run map:verify"
   },
   "dependencies": {
-    "@passport/core": "file:vendor/passport-core-0.4.5.tgz"
+    "@passport/core": "file:vendor/passport-core-0.5.0.tgz"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

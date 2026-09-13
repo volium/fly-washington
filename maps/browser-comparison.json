@@ -1,0 +1,215 @@
+{
+  "browser": "Chromium software rendering; mobile viewport emulation, not physical-device performance",
+  "records": [
+    {
+      "zoom": 9,
+      "scene": "statewide",
+      "renderWaitMs": 2094,
+      "jsHeapUsedBytes": 23707336
+    },
+    {
+      "zoom": 9,
+      "scene": "S16",
+      "renderWaitMs": 2226,
+      "jsHeapUsedBytes": 19498112
+    },
+    {
+      "zoom": 9,
+      "scene": "KORS",
+      "renderWaitMs": 2768,
+      "jsHeapUsedBytes": 27551404
+    },
+    {
+      "zoom": 9,
+      "scene": "KRNT",
+      "renderWaitMs": 3588,
+      "jsHeapUsedBytes": 51584976
+    },
+    {
+      "zoom": 9,
+      "scene": "KOMK",
+      "renderWaitMs": 4279,
+      "jsHeapUsedBytes": 17590608
+    },
+    {
+      "zoom": 9,
+      "scene": "KS52",
+      "renderWaitMs": 4100,
+      "jsHeapUsedBytes": 48892372
+    },
+    {
+      "zoom": 9,
+      "scene": "W55",
+      "renderWaitMs": 5691,
+      "jsHeapUsedBytes": 67412008
+    },
+    {
+      "zoom": 10,
+      "scene": "statewide",
+      "renderWaitMs": 2897,
+      "jsHeapUsedBytes": 31925688
+    },
+    {
+      "zoom": 10,
+      "scene": "S16",
+      "renderWaitMs": 2526,
+      "jsHeapUsedBytes": 22699324
+    },
+    {
+      "zoom": 10,
+      "scene": "KORS",
+      "renderWaitMs": 2875,
+      "jsHeapUsedBytes": 47143680
+    },
+    {
+      "zoom": 10,
+      "scene": "KRNT",
+      "renderWaitMs": 3246,
+      "jsHeapUsedBytes": 45522536
+    },
+    {
+      "zoom": 10,
+      "scene": "KOMK",
+      "renderWaitMs": 2312,
+      "jsHeapUsedBytes": 17536516
+    },
+    {
+      "zoom": 10,
+      "scene": "KS52",
+      "renderWaitMs": 2846,
+      "jsHeapUsedBytes": 31679356
+    },
+    {
+      "zoom": 10,
+      "scene": "W55",
+      "renderWaitMs": 3995,
+      "jsHeapUsedBytes": 20783596
+    },
+    {
+      "zoom": 11,
+      "scene": "statewide",
+      "renderWaitMs": 2643,
+      "jsHeapUsedBytes": 29890284
+    },
+    {
+      "zoom": 11,
+      "scene": "S16",
+      "renderWaitMs": 2293,
+      "jsHeapUsedBytes": 20097904
+    },
+    {
+      "zoom": 11,
+      "scene": "KORS",
+      "renderWaitMs": 2863,
+      "jsHeapUsedBytes": 46138200
+    },
+    {
+      "zoom": 11,
+      "scene": "KRNT",
+      "renderWaitMs": 3194,
+      "jsHeapUsedBytes": 58913820
+    },
+    {
+      "zoom": 11,
+      "scene": "KOMK",
+      "renderWaitMs": 2627,
+      "jsHeapUsedBytes": 18045156
+    },
+    {
+      "zoom": 11,
+      "scene": "KS52",
+      "renderWaitMs": 2673,
+      "jsHeapUsedBytes": 34449840
+    },
+    {
+      "zoom": 11,
+      "scene": "W55",
+      "renderWaitMs": 2923,
+      "jsHeapUsedBytes": 17894556
+    },
+    {
+      "zoom": 12,
+      "scene": "statewide",
+      "renderWaitMs": 1777,
+      "jsHeapUsedBytes": 13174632
+    },
+    {
+      "zoom": 12,
+      "scene": "S16",
+      "renderWaitMs": 1887,
+      "jsHeapUsedBytes": 33002424
+    },
+    {
+      "zoom": 12,
+      "scene": "KORS",
+      "renderWaitMs": 1963,
+      "jsHeapUsedBytes": 18295160
+    },
+    {
+      "zoom": 12,
+      "scene": "KRNT",
+      "renderWaitMs": 2331,
+      "jsHeapUsedBytes": 31684032
+    },
+    {
+      "zoom": 12,
+      "scene": "KOMK",
+      "renderWaitMs": 2710,
+      "jsHeapUsedBytes": 49477052
+    },
+    {
+      "zoom": 12,
+      "scene": "KS52",
+      "renderWaitMs": 2869,
+      "jsHeapUsedBytes": 19463684
+    },
+    {
+      "zoom": 12,
+      "scene": "W55",
+      "renderWaitMs": 3298,
+      "jsHeapUsedBytes": 49297920
+    },
+    {
+      "zoom": 13,
+      "scene": "statewide",
+      "renderWaitMs": 1554,
+      "jsHeapUsedBytes": 14687020
+    },
+    {
+      "zoom": 13,
+      "scene": "S16",
+      "renderWaitMs": 1559,
+      "jsHeapUsedBytes": 35831968
+    },
+    {
+      "zoom": 13,
+      "scene": "KORS",
+      "renderWaitMs": 1705,
+      "jsHeapUsedBytes": 18266944
+    },
+    {
+      "zoom": 13,
+      "scene": "KRNT",
+      "renderWaitMs": 1993,
+      "jsHeapUsedBytes": 31778892
+    },
+    {
+      "zoom": 13,
+      "scene": "KOMK",
+      "renderWaitMs": 2434,
+      "jsHeapUsedBytes": 21296744
+    },
+    {
+      "zoom": 13,
+      "scene": "KS52",
+      "renderWaitMs": 2527,
+      "jsHeapUsedBytes": 40904068
+    },
+    {
+      "zoom": 13,
+      "scene": "W55",
+      "renderWaitMs": 2915,
+      "jsHeapUsedBytes": 22333272
+    }
+  ]
+}

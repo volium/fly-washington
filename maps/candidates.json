@@ -1,0 +1,97 @@
+{
+  "source": "https://build.protomaps.com/20260912.pmtiles",
+  "sourceVersion": "4.15.2",
+  "sourceBlake3": "8c1e4037065b245be4249c133f0505e5a9372e17cb8f987e5ca38dcfe7ac8583",
+  "toolVersion": "pmtiles 1.31.2, commit a3e4951ea6a0477b784c27c1dcbfd9c130878c5a, built at 2026-07-22T18:59:03Z",
+  "bounds": [
+    -125.63,
+    45.03,
+    -116.13,
+    49.51
+  ],
+  "bufferMiles": 35,
+  "coverageMethod": "Washington bounding rectangle expanded by approximately 35 miles (longitude expansion at northern edge)",
+  "content": "Unmodified geographic/zoom extracts; presentation filtering does not reduce archive bytes.",
+  "candidates": [
+    {
+      "maxNativeZoom": 9,
+      "minZoom": 0,
+      "sizeBytes": 9237767,
+      "sha256": "f50ef69e4ca39fd7f6b976ff0af4319f76defcf9a7280463093f011ddd5ab13b",
+      "command": [
+        "pmtiles",
+        "extract",
+        "map-work/washington-z13.pmtiles",
+        "map-work/washington-z9.pmtiles",
+        "--bbox=-125.63,45.03,-116.13,49.51",
+        "--minzoom=0",
+        "--maxzoom=9"
+      ],
+      "verification": "2026/09/12 10:14:50 verify.go:169: Completed verify in 0s."
+    },
+    {
+      "maxNativeZoom": 10,
+      "minZoom": 0,
+      "sizeBytes": 18741196,
+      "sha256": "4f54fd7ceb029eb78e1707e2cde6af7ff995872f513ac8cdfd4d0ad7ee8e0b51",
+      "command": [
+        "pmtiles",
+        "extract",
+        "map-work/washington-z13.pmtiles",
+        "map-work/washington-z10.pmtiles",
+        "--bbox=-125.63,45.03,-116.13,49.51",
+        "--minzoom=0",
+        "--maxzoom=10"
+      ],
+      "verification": "2026/09/12 10:14:51 verify.go:169: Completed verify in 553µs."
+    },
+    {
+      "maxNativeZoom": 11,
+      "minZoom": 0,
+      "sizeBytes": 36902403,
+      "sha256": "af1aec0bf6043d43b2263759fd4d7922ff1631932938c67ac1bf3f2a7a40eae5",
+      "command": [
+        "pmtiles",
+        "extract",
+        "map-work/washington-z13.pmtiles",
+        "map-work/washington-z11.pmtiles",
+        "--bbox=-125.63,45.03,-116.13,49.51",
+        "--minzoom=0",
+        "--maxzoom=11"
+      ],
+      "verification": "2026/09/12 10:14:51 verify.go:169: Completed verify in 0s."
+    },
+    {
+      "maxNativeZoom": 12,
+      "minZoom": 0,
+      "sizeBytes": 81779500,
+      "sha256": "8da5a02e1865187da89c109e962970f49ba9088c707cfe85e1f0d6de696d9a59",
+      "command": [
+        "pmtiles",
+        "extract",
+        "map-work/washington-z13.pmtiles",
+        "map-work/washington-z12.pmtiles",
+        "--bbox=-125.63,45.03,-116.13,49.51",
+        "--minzoom=0",
+        "--maxzoom=12"
+      ],
+      "verification": "2026/09/12 10:14:51 verify.go:169: Completed verify in 3.9412ms."
+    },
+    {
+      "maxNativeZoom": 13,
+      "minZoom": 0,
+      "sizeBytes": 191831101,
+      "sha256": "b39f051421d78283dc26b91e215742acce1c0c31824f3d7b1c67673807d7e34a",
+      "command": [
+        "pmtiles",
+        "extract",
+        "https://build.protomaps.com/20260912.pmtiles",
+        "map-work/washington-z13.pmtiles",
+        "--bbox=-125.63,45.03,-116.13,49.51",
+        "--minzoom=0",
+        "--maxzoom=13"
+      ],
+      "verification": "2026/09/12 10:14:50 verify.go:169: Completed verify in 11.3272ms."
+    }
+  ]
+}

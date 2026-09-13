@@ -7,17 +7,17 @@ test('initial map fits every airport to the available viewport', async ({ page }
   for (const size of sizes) {
     await page.setViewportSize(size);
     await page.goto('/');
-    await expect(page.locator('.passport-marker')).toHaveCount(115);
+    await expect(page.locator('.airport-map-hit')).toHaveCount(115);
     await expect.poll(() => page.locator('#map').evaluate(map => {
       const bounds = map.getBoundingClientRect();
-      const markers = Array.from(map.querySelectorAll('.passport-marker')).map(marker => marker.getBoundingClientRect());
+      const markers = Array.from(map.querySelectorAll('.airport-map-hit')).map(marker => marker.getBoundingClientRect());
       return markers.every(marker => marker.left >= bounds.left && marker.right <= bounds.right
         && marker.top >= bounds.top && marker.bottom <= bounds.bottom);
     })).toBe(true);
     // The roster should occupy most of at least one axis, rather than remain zoomed out.
     const coverage = await page.locator('#map').evaluate(map => {
       const bounds = map.getBoundingClientRect();
-      const markers = Array.from(map.querySelectorAll('.passport-marker')).map(marker => marker.getBoundingClientRect());
+      const markers = Array.from(map.querySelectorAll('.airport-map-hit')).map(marker => marker.getBoundingClientRect());
       return Math.max(
         (Math.max(...markers.map(m => m.right)) - Math.min(...markers.map(m => m.left))) / bounds.width,
         (Math.max(...markers.map(m => m.bottom)) - Math.min(...markers.map(m => m.top))) / bounds.height,
@@ -32,7 +32,7 @@ test('persistent tabs expose progress and backups and restore the explorer', asy
   await page.goto('/');
   const mobile = testInfo.project.name.startsWith('mobile');
   const map = page.locator('.map-section');
-  await expect(page.locator('.passport-marker')).toHaveCount(115);
+  await expect(page.locator('.airport-map-hit')).toHaveCount(115);
   const bounds = (await map.boundingBox())!;
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(page.viewportSize()!.height + 1);
   await page.getByRole('tab', { name: 'My passport', exact: true }).click();
@@ -83,8 +83,8 @@ test('desktop map stays fully visible while details scroll and passport preserve
   await page.locator('#detail').evaluate(element => { element.scrollTop = element.scrollHeight; });
   expect(await map.boundingBox()).toEqual(bounds);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
-  const marker = page.locator('.leaflet-marker-icon[title^="BVS "]');
-  await expect(page.locator('.leaflet-pan-anim')).toHaveCount(0);
+  const marker = page.locator('.airport-map-hit[title^="BVS "]');
+
   const position = await marker.boundingBox();
   await page.getByRole('tab', { name: 'My passport', exact: true }).click();
   await page.locator('.passport-content').evaluate(element => { element.scrollTop = element.scrollHeight; });
@@ -92,7 +92,7 @@ test('desktop map stays fully visible while details scroll and passport preserve
   expect(await map.boundingBox()).toEqual(bounds);
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
   await expect(page.getByLabel('Notes', { exact: false })).toHaveValue('Keep my unfinished visit');
-  await expect(marker.locator('.is-selected')).toHaveCount(1);
+  await expect(marker).toHaveClass(/is-selected/);
   expect(await marker.boundingBox()).toEqual(position);
   await page.screenshot({ path: testInfo.outputPath('anchored-desktop.png'), fullPage: true });
   await page.setViewportSize({ width: 1000, height: 450 });

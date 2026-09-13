@@ -1,0 +1,27 @@
+{
+  "archiveBytes": 81779500,
+  "before": {
+    "quota": 3310993408,
+    "usage": 89767936,
+    "usageDetails": {
+      "indexedDB": 89767936
+    }
+  },
+  "during": {
+    "quota": 3381346304,
+    "usage": 160120832,
+    "usageDetails": {
+      "indexedDB": 160120832
+    }
+  },
+  "after": {
+    "quota": 3310997504,
+    "usage": 89772032,
+    "usageDetails": {
+      "indexedDB": 89772032
+    }
+  },
+  "oldArchiveReadableDuringStaging": true,
+  "failedReplacementRetainedActive": true,
+  "verifiedReopen": true
+}

@@ -6,11 +6,11 @@ Started 2026-09-06 from the architecture plan in `passport-core/Planning.md`. Th
 
 `@passport/core` owns typed contracts, responsive UI, map behavior, filters, IndexedDB, visits/history, progress, and portable JSON. This app owns Washington data and copy, the source-import pipeline, region colors, composition, PWA assets, Vite configuration, browser tests, and Pages workflow.
 
-The first slice uses direct TypeScript/DOM components, Leaflet 1.9.4, IndexedDB via idb, Vite, vite-plugin-pwa/Workbox, Vitest, ESLint, and Playwright. The DOM approach keeps this initial package small without adding a UI framework contract. User notes are rendered as text using escaping. Program configuration is trusted app-owned code; validate program data before mounting.
+The first slice used Leaflet 1.9.4; core 0.5.0 now uses direct TypeScript/DOM components, MapLibre/PMTiles, IndexedDB via idb, Vite, vite-plugin-pwa/Workbox, Vitest, ESLint, and Playwright. The DOM approach keeps this initial package small without adding a UI framework contract. User notes are rendered as text using escaping. Program configuration is trusted app-owned code; validate program data before mounting.
 
 ## Package development
 
-`package.json` consumes `file:vendor/passport-core-0.4.5.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.4.1 adds viewport-based initial map fitting and hollow/filled visit markers; 0.4.0 added the viewport-height explorer and My passport panel; 0.3.0 added configurable map styles and saved per-program preferences; 0.2.0 added airport reference fields. Storage and backups remain schema version 1.
+`package.json` consumes `file:vendor/passport-core-0.5.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.4.1 adds viewport-based initial map fitting and hollow/filled visit markers; 0.4.0 added the viewport-height explorer and My passport panel; 0.3.0 added configurable map styles and saved per-program preferences; 0.2.0 added airport reference fields. Storage and backups remain schema version 1.
 
 After core checks pass, run `npm run core:pack` here. This builds/packs the sibling core and refreshes the app install/lockfile. Run the app checks and browser tests, then commit the archive and lockfile together. Increment the core version and app reference for future released changes. A registry release and automated dependency upgrades are later work.
 
@@ -22,19 +22,14 @@ Map selection UX: clicking empty map space clears selection and closes details, 
 
 ## Maps, cost, and offline behavior
 
-CARTO is the only basemap, using Positron in light mode and Dark Matter in dark mode. System appearance switches the native tiles automatically. The map-style selector is hidden, and previous OpenStreetMap preferences fall back to CARTO. Provider URLs and credentials belong to `src/program/map.ts`; core retains support for other programs choosing multiple providers.
+The application owns the versioned Washington PMTiles archive, coverage/detail policy, release metadata, and complete local resource inventory. Core owns the renderer, download/status UI, storage abstraction, integrity checks, updates, rollback, and deletion. No backend, tile server, provider key, public OSM tile prefetch, or MBTiles database is introduced.
 
-Copy `.env.example` to `.env.local` and set `VITE_CARTO_BASEMAPS_KEY` to a dedicated [CARTO Basemaps key](https://carto.com/basemaps/apikey/), then restart Vite. `.env.local` is Git-ignored. This browser key is visible in built assets and tile requests; do not use a general workspace API token. For Pages builds, configure the GitHub Actions secret `CARTO_BASEMAPS_KEY`. Without a key the app still requests CARTO tiles, with provider access/watermark behavior applying. CARTO and OpenStreetMap attribution remain visible. CARTO's current documentation says raster basemaps are being retired; this change keeps Leaflet raster tiles to match the older app, with vector migration a future map-renderer change.
+See [the offline map release record](OFFLINE-MAPS.md) for preparation commands, measured z9-z13 candidates, browser evidence, retained artifacts, Pages checks, and remaining acceptance gates. App-shell precaching excludes `maps/**`; it includes the renderer worker and program bundle. Downloading the regional map is explicit. The three readiness states (shell/program/passport, map installation, browser persistence) are not inferred from network connectivity.
 
-Browser tests build into `dist-e2e` with a dummy key and intercept CARTO requests with test images. They test behavior, not real provider availability or visual cartography. Normal `npm run build` writes `dist` using local/CI configuration, and is the build intended for deployment. No developer key is needed for automated tests.
-
-Leaflet is BSD-2-Clause. The app requests CARTO tiles for the visible interactive map. Map provider URLs and attribution live in program configuration; no bulk download, prefetch, or offline tile archives are implemented.
-
-The app's service worker precaches only built app assets and the bundled airport data. It never caches OSM or CARTO tile responses in Cache Storage. Browser HTTP caching follows the provider's headers. Offline mode still supports markers, list, filters, details, visits, and backup; a detailed offline basemap is not part of this milestone. Failed tiles produce an explanatory status. CARTO uses native dark tiles.
 
 ## Storage and backup
 
-No accounts or backend. Visits live in IndexedDB on the current origin. Preferences use localStorage for appearance and the per-program map style; passport data does not. Browser data deletion can erase visits. Export JSON before clearing data or changing hosts. The UI supports date-only historical visits, repeat visits, notes, editing, and confirmation before deletion. All current visits are explicitly unverified.
+No accounts or backend. Visits live in IndexedDB on the current origin. Preferences use program-scoped localStorage for appearance; passport data does not. Browser data deletion can erase visits. Export JSON before clearing data or changing hosts. The UI supports date-only historical visits, repeat visits, notes, editing, and confirmation before deletion. All current visits are explicitly unverified.
 
 Schema/backup version 1 is documented in the core README. Restore is validated and add-only: matching IDs are skipped, existing records preserved, new records committed atomically. This is device transfer/backup, not synchronization. Attachments and ZIP archives are deferred.
 
@@ -69,7 +64,7 @@ The owner's spreadsheet was also inspected on 2026-09-06. Its 115 airport rows a
 
 Keep this document, core README/public contracts, and the plan's implementation status current as each milestone advances. Record checks actually run separately from checks merely configured in CI.
 
-## Local validation — 2026-09-06
+## Historical local validation — 2026-09-06
 
 Tabbed explorer (core 0.4.0), approved on desktop: core lint/typecheck, seven tests, and build pass; app lint/typecheck, nine program tests, data validation, and the /fly-washington/ production build pass. Full browser suite: 26 passed, seven skipped (six desktop-only cases on mobile and the existing conditional WebKit offline reload exception). Coverage includes persistent tabs, keyboard navigation, independent scrolling, desktop map bounds, draft preservation, mobile Map/List and filter restoration, and Export/Import through My passport. Desktop/mobile screenshots were inspected. The versioned archive now contains the tabbed layout; physical mobile acceptance and a remote deployment of this revision remain pending.
 
