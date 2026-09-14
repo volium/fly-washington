@@ -10,7 +10,7 @@ The first slice used Leaflet 1.9.4; core 0.5.0 now uses direct TypeScript/DOM co
 
 ## Package development
 
-`package.json` consumes `file:vendor/passport-core-0.5.0.tgz`. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.4.1 adds viewport-based initial map fitting and hollow/filled visit markers; 0.4.0 added the viewport-height explorer and My passport panel; 0.3.0 added configurable map styles and saved per-program preferences; 0.2.0 added airport reference fields. Storage and backups remain schema version 1.
+`package.json` consumes `file:vendor/passport-core-0.5.1.tgz`. Core 0.5.1 fixes wheel and pinch zoom over airport markers; page pinch-zoom remains available outside the map. The archive and package lock are versioned inputs: app CI builds without checking out a sibling repository. Local edits in `passport-core` do not affect this app until packed. Core 0.4.1 adds viewport-based initial map fitting and hollow/filled visit markers; 0.4.0 added the viewport-height explorer and My passport panel; 0.3.0 added configurable map styles and saved per-program preferences; 0.2.0 added airport reference fields. Storage and backups remain schema version 1.
 
 After core checks pass, run `npm run core:pack` here. This builds/packs the sibling core and refreshes the app install/lockfile. Run the app checks and browser tests, then commit the archive and lockfile together. Increment the core version and app reference for future released changes. A registry release and automated dependency upgrades are later work.
 

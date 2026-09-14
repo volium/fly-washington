@@ -21,7 +21,7 @@
     "prebuild": "npm run map:verify"
   },
   "dependencies": {
-    "@passport/core": "file:vendor/passport-core-0.5.0.tgz"
+    "@passport/core": "file:vendor/passport-core-0.5.1.tgz"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
