@@ -34,7 +34,7 @@ npm run build
 npm run preview
 ```
 
-Open `http://localhost:4173`, load once online, then use browser developer tools to go offline and reload. Use **My passport > Download map** while connected. After verification, the basemap, styles, sprites, glyphs, and attribution are available locally alongside airports and visits. Without that explicit download, the map may be unavailable offline. Data is per browser and origin; moving between dev, preview, phone, or Pages does not transfer visits. Use Export/Import passport to transfer a backup.
+Open `http://localhost:4173`, load once online, then use browser developer tools to go offline and reload. Use the persistent **Offline access** control and choose **Download map** while connected. The same card appears on first use and includes installation guidance. After verification, the basemap, styles, sprites, glyphs, and attribution are available locally alongside airports and visits. Browser tabs download only on request. On first eligible installed-app launch, a missing map downloads automatically with visible progress and Cancel; an existing verified map is reused. Cancelled/failed attempts require an explicit retry. Data is per browser and origin; moving between dev, preview, phone, or Pages does not transfer visits. Use Export/Import passport to transfer a backup.
 
 ## Checks
 

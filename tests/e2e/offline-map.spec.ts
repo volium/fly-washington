@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures';
 
-test('complete downloaded map survives a cold offline tab and deletion preserves visits', async ({ page, context, browserName }, testInfo) => {
+test('complete downloaded map survives a cold offline tab and keeps visits separate', async ({ page, context, browserName }, testInfo) => {
   test.setTimeout(180000);
   await page.goto('/');
   await expect(page.locator('.airport-map-hit')).toHaveCount(115);
@@ -13,8 +13,8 @@ test('complete downloaded map survives a cold offline tab and deletion preserves
   await page.getByLabel('Notes',{exact:false}).fill('Offline package does not own visits');
   await page.getByRole('button',{name:'Save check-in'}).click();
   await page.getByRole('button',{name:'All airports'}).click();
-  await page.getByRole('tab',{name:'My passport',exact:true}).click();
-  await expect(page.locator('#map-status')).toContainText('Map not available offline');
+  await page.locator('#offline-access').click();
+  await expect(page.locator('#map-status')).toContainText('Map not downloaded');
   const before = await page.evaluate(() => navigator.storage.estimate());
   const downloadStarted = Date.now();
   await page.locator('#map-download').click();
@@ -22,7 +22,7 @@ test('complete downloaded map survives a cold offline tab and deletion preserves
   const after = await page.evaluate(() => navigator.storage.estimate());
   await testInfo.attach('installation-measurement.json', {body:JSON.stringify({downloadMs:Date.now()-downloadStarted,before,after}),contentType:'application/json'});
   await expect(page.locator('#map')).toHaveAttribute('data-basemap-mode','offline',{timeout:30000});
-  await page.getByRole('tab',{name:'Explore',exact:true}).click();
+  if(await page.locator('#offline-card').isVisible()) await page.locator('#offline-close').click();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button',{name:'Map',exact:true}).click();
   await expect(page.locator('#map')).toHaveAttribute('data-basemap-state','ready',{timeout:30000});
   await context.setOffline(true);
@@ -54,13 +54,13 @@ test('complete downloaded map survives a cold offline tab and deletion preserves
   await expect(cold.locator('#map')).toHaveAttribute('data-basemap-theme','dark');
   await expect(cold.locator('#map')).toHaveAttribute('data-basemap-state','ready');
   await cold.screenshot({path:testInfo.outputPath('cold-offline-map.png')});
-  await cold.getByRole('tab',{name:'My passport',exact:true}).click();
+  await cold.locator('#offline-access').click();
   await expect(cold.locator('#map-status')).toContainText('Map available on this device');
   expect(unexpected).toEqual([]);
   const cacheUrls = await cold.evaluate(async () => (await Promise.all((await caches.keys()).map(async name => (await (await caches.open(name)).keys()).map(r=>r.url)))).flat());
   expect(cacheUrls.some(url=>/\/maps\//.test(url))).toBe(false);
-  await cold.locator('#map-delete').click();
-  await expect(cold.locator('#map-status')).toContainText('Map not available offline');
+  await expect(cold.locator('#map-delete')).toHaveCount(0);
+  await cold.locator('#offline-close').click();
   await cold.getByRole('tab',{name:'Explore',exact:true}).click();
   if (testInfo.project.name.startsWith('mobile')) await cold.getByRole('button',{name:'List',exact:true}).click();
   await cold.locator('[data-airport="KBVS"]').click();

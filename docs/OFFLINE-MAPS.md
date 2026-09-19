@@ -1,6 +1,6 @@
 # Washington offline map — implementation and release record
 
-The working implementation uses core 0.5.0 with MapLibre GL JS and a program-owned Protomaps PMTiles package. It is not yet a deployed release. The package endpoint and physical Safari/Android acceptance remain release gates; publishing must not be inferred from local tests.
+The owner reports the MapLibre/PMTiles application deployed. The current working tree integrates core 0.6.0 offline-access UI; deployment and physical installed-PWA acceptance of this revision remain pending. The existing Washington archive and release-assets distribution are unchanged.
 
 ## Measured candidates
 
@@ -38,7 +38,7 @@ Map data attribution is OpenStreetMap/ODbL with Protomaps credit. Fonts use SIL 
 4. Preserve `public/maps/20260912-z12/` as a complete immutable release artifact, including its manifest. CI uploads that directory with 90-day retention. **Before production promotion, retain the archive in a durable static/release location and configure the repository's `MAP_ARCHIVE_URL` variable.** A CI cache or expiring artifact is not a permanent source archive; Protomaps daily-build retention is not guaranteed. Large generated files are ignored by Git. Keep the preceding release for rollback.
 5. Build with `BASE_PATH=/fly-washington/` for Pages, publish the complete tested `dist/`, and run `MAP_SITE_URL=https://volium.github.io/fly-washington/ npm run map:host-check` (set environment variables using the local shell's syntax). Do not publish a program manifest pointing to missing resources.
 
-Map versions are independent of airport data and core versions. Roll back the program's advertised manifest to a retained immutable map release when needed; installed clients can also restore their retained previous generation through My passport. Never replace bytes at a published version's URLs. The generation script currently pins the first source/version deliberately; a new release changes those constants and records a new experiment/manifest explicitly.
+Map versions are independent of airport data and core versions. Roll back the program's advertised manifest to a retained immutable map release when needed; installed clients can also restore their retained previous generation through Offline access > Repair options. Never replace bytes at a published version's URLs. The generation script currently pins the first source/version deliberately; a new release changes those constants and records a new experiment/manifest explicitly.
 
 ## Offline behavior and space
 
@@ -60,3 +60,9 @@ Z12 payloads alone require about 93.01 MB for one complete package or 186.02 MB 
 - Physical iPhone/Safari and Android acceptance remains open: cold startup in airplane mode, panning/overzoom and labels at representative airports, actual memory/storage pressure, denied persistence, interrupted/update downloads with old/new coexistence, restart after eviction, accessibility, and retained visit/draft behavior. Do not label these unperformed tests as passed or remove them from the release gate.
 
 No backend, tile server, CARTO dependency, MBTiles solution, or bulk public OpenStreetMap tile download is part of this implementation. No commit, push, release upload, or deployment was performed during local implementation.
+
+## Offline access and installation guidance (0.6.0)
+
+Offline access is always available above Explore/My passport. First use opens the same dismissible card; closing it does not cancel a transfer. Browser downloads are manual; eligible standalone launches automatically download only when there is no usable map or retained attempt. Progress includes all 93,010,324 archive/resource bytes, then reports verification separately. Cancelling, a failed attempt, or deliberate maintenance deletion suppresses automatic retries; erasing all origin data also erases that preference. Updates remain explicit. A healthy map has no normal Delete control.
+
+Granted storage protection has no visible indicator. Denied/unknown protection has a subtle expandable shield; visits should still be exported as a backup. The app supplies installation instructions through core's typed guidance callback, including a small Share glyph on iOS. Instructions follow [Chrome iOS help](https://support.google.com/chrome/answer/9658361?co=GENIE.Platform%3DiOS&hl=en); the storage explanation follows [WebKit storage separation](https://webkit.org/blog/14787/webkit-features-in-safari-17-2/#login-cookies) and [Android Chrome profile sharing](https://web.dev/articles/webapks#managing_storage_and_app_state). Platform guidance does not substitute for actual byte/persistence checks.
