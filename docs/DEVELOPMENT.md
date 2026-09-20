@@ -2,6 +2,8 @@
 
 ## Scope and ownership
 
+Passport planning update (2026-09-20): the next approved feature is documented in the sibling passport-core checkout's docs/PASSPORT-COLLECTION.md and Planning.md Sections 23-25 / Phase P1. Keep regional progress cards and make them expandable; add My stamps with alphabetical/collection-order views, one stamp per airport, repeat-visit history, earlier-date confirmation, and same-date-only drag ordering with keyboard support. This is not implemented. Core owns the reusable UI, ordering, storage/migrations, and backup contract; this app supplies Washington data and later validates the packaged feature on desktop/mobile. No program map release or regeneration is needed. Schema, earliest-visit deletion/correction, and import/conflict details are explicitly pending review before implementation.
+
 Started 2026-09-06 from the architecture plan in `passport-core/Planning.md`. The plan's `core-passport` name refers to the actual `passport-core` checkout. These remain independent repositories.
 
 `@passport/core` owns typed contracts, responsive UI, map behavior, filters, IndexedDB, visits/history, progress, and portable JSON. This app owns Washington data and copy, the source-import pipeline, region colors, composition, PWA assets, Vite configuration, browser tests, and Pages workflow.
