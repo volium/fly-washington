@@ -1,5 +1,41 @@
 import { test, expect } from './fixtures';
 
+test('import remains usable after repeated saved exports and download URL cleanup', async ({ page }, testInfo) => {
+  await page.clock.install();
+  await page.goto('/');
+  const airportId = await page.locator('[data-airport]').first().getAttribute('data-airport');
+  const now = new Date().toISOString();
+  await page.locator('#passport-tab').click();
+  const initialChooser = page.waitForEvent('filechooser');
+  await page.locator('#import-button').click();
+  await (await initialChooser).setFiles({
+    name: 'initial.json', mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({
+      format: 'aviation-passport', schemaVersion: 1, programId: 'fly-washington', exportedAt: now, attachments: [],
+      checkIns: [{ id: 'export-import-regression', programId: 'fly-washington', airportId,
+        visitedAt: now.slice(0, 10), timeKnown: false, notes: 'Preserve this visit',
+        createdAt: now, updatedAt: now, verification: { status: 'unverified' } }],
+    })),
+  });
+  await expect(page.locator('#passport-notice')).toContainText('Imported 1 visits');
+  for (const afterCleanup of [false, true]) {
+    const download = page.waitForEvent('download');
+    await page.locator('#export').click();
+    const savedFile = testInfo.outputPath(`saved-${afterCleanup}.json`);
+    await (await download).saveAs(savedFile);
+    // Exercise both sides of the export's ten-second object-URL cleanup timer.
+    if (afterCleanup) await page.clock.fastForward(11000);
+    await expect(page.locator('#import-button')).toBeEnabled();
+    const chooser = page.waitForEvent('filechooser');
+    await page.locator('#import-button').click();
+    await (await chooser).setFiles(savedFile);
+    await expect(page.locator('#passport-notice')).toContainText('Imported 0 visits');
+    await expect(page.locator('#overall strong')).toHaveText('1 / 115');
+  }
+  await page.reload();
+  await expect(page.locator('#overall strong')).toHaveText('1 / 115');
+});
+
 test('both export actions download a backup and show brief local feedback', async ({ page, context }) => {
   await context.addInitScript(() => {
     Object.defineProperty(navigator.storage, 'persisted', { value: async () => false });
