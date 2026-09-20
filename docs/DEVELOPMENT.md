@@ -125,7 +125,9 @@ Validation: core typecheck/build/lint and 27 unit tests passed; the initial 15-s
 
 Core fixes are separate commits: card-width export feedback (`81ad637`), truthful export wording (`8dca109`), and import feedback/contract (`7740063`), followed by version packaging (`a20a700`).
 
-### Intermittent iOS import after saving an export
+### Intermittent iOS import after saving an export (historical investigation)
+
+The observations and proposed checks below record the earlier investigation. The completed device results are in [the investigation outcome](#chrome-on-ios-investigation-outcome).
 
 Further owner testing narrows the Chrome iOS Incognito report: Import works initially, but sometimes stops opening after Export followed by saving the backup. This is intermittent; the cause is not established. Export disables only its own button. Import has independent busy state, and export's ten-second cleanup revokes only the generated download URL. No production workaround has been added based on this correlation.
 
@@ -133,7 +135,7 @@ The regression in `tests/e2e/export-feedback.spec.ts` now imports one visit, exp
 
 Next device observation: when it fails, does tapping Import show the chooser instruction, leave an importing status, or produce no response? Does reload restore the chooser? A chooser instruction indicates the handler ran; an importing status indicates a file was selected and processing began. These distinguish picker presentation from file/storage processing and a tap or disabled-control problem. Do not increase delays, clear browser data, automatically reload, or replace the export mechanism without evidence connecting that change to the failure.
 
-### Import recovery candidate (core 0.6.3)
+### Import recovery candidate (core 0.6.3, historical)
 
 The owner has now confirmed that a failed tap shows the cancellation message without opening the chooser, and reloading restores Import. The same failure occurs in normal Chrome iOS, so Incognito is not a necessary trigger. That message comes from a cancel event or an empty file selection, before file reading or storage writes. It does not establish that the user deliberately cancelled, or identify whether the stuck state belongs to the input element or Chrome's native interface.
 
@@ -142,3 +144,21 @@ Core 0.6.3 uses a fresh hidden file input on each explicit Import attempt, activ
 This is a bounded recovery candidate for stale input state, not a confirmed fix for the device failure. Retest Import, Export/save, then Import repeatedly in normal and Incognito Chrome iOS. If the same symptom persists, replacing the input alone is insufficient; investigate the browser's native picker/download handoff rather than adding arbitrary delays. The regression with a simulated element that always cancels verifies replacement and stale-event isolation, not Chrome iOS internals.
 
 Validation: core lint/typecheck/build and all 17 browser scenarios passed. After the final recovery-copy update, all nine app backup scenarios passed on desktop Chromium, mobile Chromium, and mobile WebKit. App lint, production typecheck/build, and full map verification passed. The packaged 0.6.3 archive matches the lockfile integrity, and port 5173 serves the final production build. Physical Chrome iOS acceptance in both browsing modes remains pending. No push or deployment was performed.
+
+### Chrome on iOS investigation outcome
+
+Physical-device testing reproduced the export/save followed by immediate picker cancellation in Chrome on iOS 26, in normal and Incognito modes. The owner could not reproduce it in Safari, including in Fly Washington. This strongly points to Chrome-on-iOS integration; the exact native cause and affected browser versions remain unconfirmed.
+
+| Control | Observed result |
+| --- | --- |
+| Import only | 16 attempts without failure. |
+| Delay after export | Failed after a 17.253-second interval from download initiation. |
+| Retain export URLs | Failed after export #3, 16.265 seconds after download initiation; no URLs had been revoked. |
+| Standalone dummy export and directly tapped visible input | Failed after export #4; five native cancellations took 10-18 ms, without blur/focus transitions. |
+| Safari on the same phone | Owner could not reproduce, including in the app; not a guarantee for every version. |
+
+The standalone reproduction requires no Passport Core, passport storage, input replacement, hidden-input activation, or URL cleanup. Retaining URLs and replacing inputs are not fixes for this defect. Preserve ordinary export cleanup and the existing neutral no-selection message, with guidance to save unfinished visits before reloading. Automated Chromium/WebKit tests do not substitute for physical Chrome-on-iOS validation.
+
+Temporary application diagnostics and the unpublished 0.6.4 package were removed; the app uses the existing 0.6.3 archive. Its committed fresh-input behavior remains, but is no longer described as a validated browser fix. No new runtime workaround is introduced.
+
+The [standalone reproducer](diagnostics/backup-picker-test.html) is retained outside public deployment assets, together with [reproduction instructions](diagnostics/README.md). It uses dummy data and retains temporary URLs only for the controlled experiment. Do not copy it into public assets for deployment. Before filing a browser report, include exact Chrome/iOS versions, the observed save workflow, the minimal page, and a sanitized log. No browser report has been submitted.

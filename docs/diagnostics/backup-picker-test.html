@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isolated download and file picker test</title>
+<style>
+body { font: 16px system-ui; max-width: 42rem; margin: 1.5rem auto; padding: 0 1rem; }
+button, input { font: inherit; margin: .5rem 0; }
+textarea { box-sizing: border-box; width: 100%; }
+</style>
+<h1>Download and file picker test</h1>
+<p>This page does not load Passport Core, read your passport, or import files. It downloads a small dummy JSON file. The file picker below is a normal, visible browser control.</p>
+<ol>
+<li>Tap Export test file and save it.</li>
+<li>Tap Choose File below, then cancel once the picker opens.</li>
+<li>Repeat up to 10 times. If the picker stops opening, copy the log before reloading.</li>
+</ol>
+<button id="export" type="button">Export test file</button>
+<p><label>Open file picker: <input id="import" type="file" accept="application/json,.json"></label></p>
+<p id="status" role="status"></p>
+<button id="copy" type="button">Select log</button>
+<textarea id="log" rows="12" readonly aria-label="Diagnostic log"></textarea>
+<script>
+const output = document.querySelector('#log');
+const status = document.querySelector('#status');
+const retained = [];
+let sequence = 0;
+let exports = 0;
+let imports = 0;
+let started = 0;
+function log(event, details = {}) {
+  output.value += JSON.stringify({ sequence: ++sequence, time: new Date().toISOString(), event,
+    exports, imports, elapsedMs: started ? Math.round(performance.now() - started) : null,
+    activation: navigator.userActivation?.isActive ?? null, focused: document.hasFocus(), ...details }) + '\n';
+}
+log('enabled', { revision: 'isolated-native-input-1' });
+document.querySelector('#export').addEventListener('click', () => {
+  if (exports >= 20) { status.textContent = 'Test limit reached. Copy the log before reloading.'; return; }
+  exports++;
+  const url = URL.createObjectURL(new Blob(['{"diagnostic":true}'], {type:'application/json'}));
+  retained.push(url);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'picker-test.json';
+  log('download-call');
+  link.click();
+  log('download-return-url-retained');
+});
+const input = document.querySelector('#import');
+input.addEventListener('click', event => {
+  imports++;
+  started = performance.now();
+  log('native-input-click', { trusted: event.isTrusted });
+});
+input.addEventListener('cancel', event => {
+  log('input-cancel', { trusted: event.isTrusted });
+  status.textContent = 'No file selected. If the picker did not appear, copy the log.';
+});
+input.addEventListener('change', event => {
+  log('input-change', { trusted: event.isTrusted, hasFile: !!input.files?.length });
+  status.textContent = 'Selection received. The file was not read or imported.';
+  input.value = '';
+});
+for (const event of ['focus', 'blur', 'pageshow', 'pagehide']) window.addEventListener(event, () => log(event));
+document.addEventListener('visibilitychange', () => log('visibilitychange', { visibility: document.visibilityState }));
+document.querySelector('#copy').addEventListener('click', () => {
+  log('log-snapshot');
+  output.focus(); output.select(); output.setSelectionRange(0, output.value.length);
+});
+</script>
+</html>
