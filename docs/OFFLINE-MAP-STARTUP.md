@@ -1,8 +1,8 @@
 # Saved-map startup investigation
 
-Status: investigated on 2026-09-19; optimization is proposed, not implemented. Keep this separate from the export feedback, title focus, and storage-copy fixes in core 0.6.1.
+Status: lightweight reopening approved and implemented locally in core 0.6.4. Device timing validation and deployment remain pending. This is separate from the core 0.6.1 feedback/title/storage-copy fixes.
 
-## Current behavior
+## Historical behavior before 0.6.4
 
 `passport-core/src/map/offline/manager.ts` calls `verify()` during `checkInventory()`, on startup and foreground refresh. Verification reads and hashes the complete archive and every supporting resource, validates both styles, and checks the PMTiles header. Only afterward does it publish the active package. On initial launch, `src/map/renderer.ts` deliberately waits while the manager is checking and has no active package.
 
@@ -19,18 +19,34 @@ An isolated Chromium 1243 test context loaded the existing production preview at
 
 This is one instrumented local desktop observation, including browser scheduling and storage work. It is not an iPhone measurement, a benchmark of hashing alone, or a promised speedup. A comparison should repeat identical cold-start scenarios on physical phones and both browser/installed-app contexts.
 
-## Options
+## Options considered
 
 | Option | Benefit | Tradeoff |
 | --- | --- | --- |
 | Keep full verification before rendering | No unverified stored package is displayed. | Full-package work remains on every cold-start rendering path. |
-| Fast reopening followed by background verification (recommended) | The map can render after checking the package metadata, required chunk presence, header, selected style, and resources needed for the initial view. | Integrity of content not yet checked remains provisional; later failure needs explicit recovery. |
-| Verify fully only at download/update time | Avoids recurring full-package reads. | Later corruption outside currently requested content may go undetected; weaker ongoing assurance. |
+| Fast reopening followed by background verification (not selected) | The map can render after checking the package metadata, required chunk presence, header, selected style, and resources needed for the initial view. | Integrity of content not yet checked remains provisional; later failure needs explicit recovery. |
+| Verify fully at download/update activation, with explicit rollback verification (selected) | Avoids recurring full-package reads. | Later corruption outside currently requested content may go undetected; weaker ongoing assurance. |
 
-## Proposed separate change
+## Implemented policy
 
-Retain complete integrity checks before activating any newly downloaded or replacement package. For a previously activated immutable generation, distinguish usable-for-rendering from fully checked offline availability. Do a fast metadata/presence/header/style check, allow local rendering, and verify remaining content at lower priority without delaying the initial map.
+Full streamed and stored-byte verification remains mandatory before activating downloads or updates, covering the archive and all supporting resources. Explicit rollback also fully verifies the retained candidate before switching the pointer.
 
-Keep the status honest: rendering a saved map must not imply every offline resource has been reverified. Corrupt/missing bytes must remain actionable; background checks must not silently delete the map or automatically redownload it. Never overwrite a newer generation's state with a stale check result. Coalesce foreground checks and coordinate verification, replacement, and deletion across tabs. Preserve passport records independently.
+Startup and foreground reopening of previously activated generations instead validate the saved manifest and package identity, query all expected chunk keys, and read both styles and the PMTiles header for compatibility. The key query covers every archive chunk and all styles, sprites, glyphs, fonts, and attribution resources without reading every payload. Existing installed generations need no migration or redownload. Failed replacement recovery uses lightweight reopening too.
 
-Acceptance should cover time to first usable map, bytes read before first paint, offline unseen-area navigation, both appearances, missing resources, corrupted archive chunks outside the current view, failed replacement, cross-tab races, and recovery. Keep the existing IndexedDB adapter for this experiment; a storage-backend migration would confound the comparison.
+There is no routine background full-package scan. Availability means that installation passed full verification and current lightweight checks pass; it does not mean every byte was hashed again this session. Missing keys are detected immediately. Truncated/unreadable bytes reached later invalidate only the matching active generation; renderer errors retain their separate recovery path. Same-length corruption, especially outside the current view, can remain undetected. This is an explicit accepted tradeoff, not a claim that parsing detects every alteration.
+
+After initial inventory resolution, foreground reconciliation is silent: preserve the current banner and controls until an actual availability change. Successful style/header validation is reused for the same immutable generation within the session; returning to the window checks chunk keys without rereading those payloads. A fresh session or changed generation validates styles/header again. This avoids repeated Checking map announcements, disabled actions, and collapsed Repair options while still detecting missing records.
+
+Repair/redownload remains explicit and verifies its replacement completely. Rollback is an explicit full verification path; no new Verify button is introduced. Checks do not silently delete installed maps or redownload them. Existing locks and coalescing coordinate checks with replacement/deletion; stale read failures cannot invalidate a newer generation. Passport storage remains independent. IndexedDB stays the storage backend.
+
+The earlier background-scan recommendation was conservative. There is no observed post-install byte corruption in this investigation to justify reading the complete regional package on every launch. Ordinary eviction detection and byte-for-byte integrity assurance are different checks.
+
+## Validation
+
+Reload follow-up: style-resource validation itself was expensive even after removing whole-package hashing. For every glyph reference it scanned the manifest and repeatedly normalized resource URLs. An isolated Node run using both actual Washington styles measured 946 ms for light and 915 ms for dark. Replacing the repeated scans with one normalized URL set per validation measured 38 ms and 13 ms in a subsequent run. These are individual local CPU observations, not browser startup timings or phone speedup guarantees. Both styles still pass the same validation, and removing required glyph ranges still fails. No compatibility or integrity checks were removed by this optimization.
+
+A separate fresh automated Chromium context installed the complete Washington package from the rebuilt 5173 preview, then reloaded. The offline-availability banner appeared at approximately 396 ms after navigation, and the renderer's ready state at 832 ms. This was one local desktop reload with an installed package and network available, not a cold offline/PWA or physical-phone benchmark. No user browser profile was used. All 33 core unit tests, core lint/build/typecheck, app build/typecheck, and map asset verification passed after the lookup optimization.
+
+Core regressions exercise bounded reopening reads across startup/foreground, offline tail reads, absent archive/resource keys, deferred tail corruption, truncated reads, corrupt stored downloads, failed replacement, and corrupt rollback rejection. The pre-change desktop observation above is historical; it is not a measurement of this implementation or a promised speedup.
+
+Application acceptance should exercise a fully downloaded real package with network disabled, both appearances, unseen-area navigation, visit preservation, and physical iPhone/PWA startup timing. Existing Chromium/WebKit automation does not establish real-device timing or replace the documented narrow WebKit cold-navigation limitation.
