@@ -73,6 +73,6 @@ test('import opens the native chooser and shows brief completion and cancellatio
   await expect(page.locator('#passport-notice')).toContainText('Imported 0 visits');
   await expect(page.locator('#passport-notice')).toHaveText('',{timeout:7000});
   await page.locator('#import').dispatchEvent('cancel');
-  await expect(page.locator('#passport-notice')).toContainText('Import cancelled');
+  await expect(page.locator('#passport-notice')).toContainText('No file selected');
   await expect(page.locator('#passport-notice')).toHaveText('',{timeout:7000});
 });
