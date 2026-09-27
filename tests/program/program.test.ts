@@ -14,7 +14,7 @@ describe('official map dataset through the public core API', () => {
     expect(new Set(dataset.map(a => a.provenance.ourAirportsId)).size).toBe(115);
     expect(new Set(dataset.map(a => a.id))).toEqual(new Set(crosswalk.map(a => a.airportId)));
     expect(report.unmatchedAirports).toEqual([]);
-    expect(report.regions.map(r => r.count)).toEqual([24,19,13,20,23,12,4]);
+    expect(report.regions.map(r => r.count)).toEqual([19,13,24,23,12,20,4]);
     expect(dataset.every(a => a.provenance.stampInstructions.trim())).toBe(true);
     // Optional source fields remain absent rather than becoming fabricated facts.
     expect(dataset.filter(a=>!a.address)).toHaveLength(56);
@@ -69,3 +69,7 @@ describe('official map dataset through the public core API', () => {
 function visit(airportId: string, id: string | number = airportId): CheckIn {
   return {id:String(id),airportId,programId:flyWashingtonProgram.id,visitedAt:'2026-08-10',timeKnown:false,createdAt:'2026-08-10T12:00:00Z',updatedAt:'2026-08-10T12:00:00Z',notes:'',verification:{status:'unverified'}};
 }
+
+it('preserves the owner-confirmed official region order and colors', () => {
+  expect(flyWashingtonProgram.regions.map(({id, color}) => [id, color])).toEqual([["olympic","#0097a7"],["southwest","#b10202"],["northwest","#f57c00"],["north-central","#7cb342"],["south-central","#9c27b0"],["eastern","#ffea00"],["seaplane-bases","#01579b"]]);
+});

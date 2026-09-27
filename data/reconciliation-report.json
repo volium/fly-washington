@@ -10,10 +10,6 @@
   "runwayCount": 153,
   "regions": [
     {
-      "id": "northwest",
-      "count": 24
-    },
-    {
       "id": "olympic",
       "count": 19
     },
@@ -22,8 +18,8 @@
       "count": 13
     },
     {
-      "id": "eastern",
-      "count": 20
+      "id": "northwest",
+      "count": 24
     },
     {
       "id": "north-central",
@@ -32,6 +28,10 @@
     {
       "id": "south-central",
       "count": 12
+    },
+    {
+      "id": "eastern",
+      "count": 20
     },
     {
       "id": "seaplane-bases",

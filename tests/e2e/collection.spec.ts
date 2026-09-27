@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test } from './fixtures';
 
 test('native visit date fields fit narrow Passport and Explore editors', async ({ page }) => {
@@ -74,4 +75,23 @@ test('earlier visit can retain its stamp date in the packaged mobile and desktop
   await page.locator('[data-key="region:northwest"] > summary').click();
   await expect(row.locator('summary')).toContainText('Stamp 2026-09-10');
   await expect(row).toContainText('2 visits');
+});
+
+
+test('Explore uses official region order and alphabetical airport names', async ({ page }, testInfo) => {
+  await page.goto('/');
+  await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
+  if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
+  const regions: { id: string; name: string }[] = JSON.parse(readFileSync('src/program/regions.json', 'utf8'));
+  const airports: { id: string; name: string; regionId: string; participation: { participating: boolean } }[] = JSON.parse(readFileSync('src/program/airports.generated.json', 'utf8'));
+  await expect(page.locator('#region option')).toHaveText(['All regions', ...regions.map(r => r.name)]);
+  const expected = regions.flatMap(r => airports.filter(a => a.regionId === r.id && a.participation.participating).sort((a,b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true }) || a.id.localeCompare(b.id)));
+  const ids = () => page.locator('#airport-list [data-airport]').evaluateAll(rows => rows.map(r => r.getAttribute('data-airport')));
+  expect(await ids()).toEqual(expected.map(a => a.id));
+  for (const region of regions) {
+    await page.locator('#region').selectOption(region.id);
+    expect(await ids()).toEqual(expected.filter(a => a.regionId === region.id).map(a => a.id));
+  }
+  await page.locator('#region').selectOption('');
+  expect(await ids()).toEqual(expected.map(a => a.id));
 });
