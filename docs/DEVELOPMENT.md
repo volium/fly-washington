@@ -194,3 +194,11 @@ The owner selected the compact overview and expandable sections. Airport name no
 ### Stamp sorting and collection numbers (0.7.4)
 
 My stamps offers Airport name, Collection order (one continuous sequence, earliest first), and Date (date groups with same-day reordering). All three display the same derived collection numbers; changes to collection dates, membership, and saved same-day order renumber them. Same-day order is labeled when unconfirmed. Visit-only records have no collection number. Core owns numbering and sorting; the program supplies airport data. Existing persisted orders and backups remain compatible; no separate global rank is stored.
+
+### Passport entries open airport details (0.7.5)
+
+Airport names in By region and every My stamps sort open the shared details view. Passport entries no longer contain expandable visit editors or Add/Show details buttons. Back to My Passport restores view, sort, expanded regions, scroll and focus. Unfinished details drafts survive navigation. Reordering must be saved or cancelled before opening another airport.
+
+For an owner-confirmed retirement, remove the airport from active source membership and retain its full metadata in src/program/retired-airports.ts with its original stable ID and participation.participating=false. The registry is separate from generated active data so regeneration cannot discard retired metadata. Keep its region and coordinates; do not infer retirement solely from a closure flag. Duplicate IDs fail program validation. Retired airports remain accessible through saved Passport entries, show a selected marker and a clear retirement notice in details, and are excluded from current progress and normal Explore results. An old record missing metadata opens visit history by ID without a fabricated marker. Core owns this behavior; the program owns the retirement decision and retained data.
+
+Regional cards now use compact headers with region-colored outlined chevrons and thin progress bars. Counts remain visited/total even when complete. Redundant captions are omitted; a requirement appears only for incomplete regions whose configured threshold differs from their total. Completion and award eligibility rules are unchanged, including the current Olympic configuration.
