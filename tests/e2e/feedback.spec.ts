@@ -20,8 +20,8 @@ test('visit feedback disables saving and collapses deleted history without repla
   await expect(button).toBeEnabled();
   await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished draft');
   const form = await page.locator('#checkin').elementHandle();
-  page.once('dialog', dialog => dialog.accept());
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete visit', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Visit deleted', exact: true })).toBeDisabled();
   await expect(page.locator('.history')).toContainText('Retain this visit during confirmation');
   await expect(page.locator('#visit-count')).toHaveText('0');

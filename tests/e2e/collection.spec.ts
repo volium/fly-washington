@@ -1,5 +1,29 @@
 import { expect, test } from './fixtures';
 
+test('native visit date fields fit narrow Passport and Explore editors', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto('/');
+  await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
+  await page.locator('#passport-tab').click();
+  await page.locator('[data-key="region:northwest"] > summary').click();
+  const row = page.locator('[data-stamp="KBVS"]');
+  await row.locator('summary').click();
+  await row.getByRole('button', { name: 'Add a visit', exact: true }).click();
+  const date = row.getByLabel('Visit date');
+  await date.fill('2026-09-10');
+  await expect(date).toHaveValue('2026-09-10');
+  const fits = (element: HTMLElement) => {
+    const field = element.getBoundingClientRect();
+    const label = element.closest('label')!.getBoundingClientRect();
+    const form = element.closest('form')!.getBoundingClientRect();
+    return field.left >= label.left - 1 && field.right <= label.right + 1 && field.right <= form.right + 1;
+  };
+  expect(await date.evaluate(fits)).toBe(true);
+  await row.getByRole('button', { name: 'Show on map', exact: true }).click();
+  expect(await page.locator('#checkin input[type="date"]').evaluate(fits)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test('packaged Passport expands Washington regions and restores a chosen collection order', async ({ page }, testInfo) => {
   await page.goto('/');
   await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
@@ -26,4 +50,28 @@ test('packaged Passport expands Washington regions and restores a chosen collect
   await expect(page.locator('[data-stamp]').last()).toHaveAttribute('data-stamp', id!);
   await expect(page.locator('#overall strong')).toHaveText('3 / 115');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('earlier visit can retain its stamp date in the packaged mobile and desktop app', async ({ page }, testInfo) => {
+  await page.goto('/'); await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
+  await page.locator('#passport-tab').click();
+  await page.locator('[data-key="region:northwest"] > summary').click();
+  const row = page.locator('[data-stamp="KBVS"]'); await row.locator('summary').click();
+  await row.getByRole('button', { name: 'Add a visit', exact: true }).click();
+  await row.getByLabel('Visit date').fill('2026-09-10'); await row.getByRole('button', { name: 'Save check-in' }).click();
+  await expect(row.locator('summary')).toContainText('Stamp 2026-09-10');
+  await row.getByRole('button', { name: 'Add another visit' }).click();
+  await row.getByLabel('Visit date').fill('2026-09-08'); await row.getByLabel('Notes').fill('Before stamp collection');
+  await row.getByRole('button', { name: 'Save check-in' }).click();
+  await expect(page.getByRole('dialog')).toContainText('2026-09-10');
+  await expect(page.getByRole('dialog')).toContainText('2026-09-08');
+  await page.screenshot({ path: testInfo.outputPath('earlier-visit-choice.png') });
+  expect(await page.getByRole('dialog').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  await page.getByRole('button', { name: 'Save visit only', exact: true }).click();
+  await expect(row.locator('summary')).toContainText('Stamp 2026-09-10');
+  await expect(row).toContainText('Visit only - excluded from stamp collection');
+  await page.reload(); await page.locator('#passport-tab').click();
+  await page.locator('[data-key="region:northwest"] > summary').click();
+  await expect(row.locator('summary')).toContainText('Stamp 2026-09-10');
+  await expect(row).toContainText('2 visits');
 });

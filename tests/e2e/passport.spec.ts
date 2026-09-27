@@ -100,8 +100,8 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   const path = testInfo.outputPath('passport.json'); await download.saveAs(path);
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
-  page.once('dialog', dialog => dialog.accept());
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete visit', exact: true }).click();
   await expect(page.locator('.history article')).toHaveCount(0);
   await page.getByRole('button', { name: 'All airports' }).click();
   await page.getByRole('tab', { name: 'My passport', exact: true }).click();
