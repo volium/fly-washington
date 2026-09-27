@@ -51,6 +51,18 @@ test('packaged Passport expands Washington regions and restores a chosen collect
   await page.getByRole('button', { name: 'My stamps', exact: true }).click(); await page.getByLabel('Sort stamps').selectOption('date');
   await expect(page.locator('[data-stamp]').last()).toHaveAttribute('data-stamp', id!);
   await expect(page.locator('#overall strong')).toHaveText('3 / 115');
+  const expected = await page.locator('[data-stamp]').evaluateAll(rows => rows.map(row => row.getAttribute('data-stamp')));
+  for (const mode of ['name', 'order', 'date']) {
+    await page.getByLabel('Sort stamps').selectOption(mode);
+    for (const [index, airportId] of expected.entries()) {
+      await expect(page.locator('[data-stamp="' + airportId + '"] .collection-number')).toHaveText('#' + (index + 1));
+    }
+    if (mode === 'order') {
+      expect(await page.locator('[data-stamp]').evaluateAll(rows => rows.map(row => row.getAttribute('data-stamp')))).toEqual(expected);
+      await expect(page.locator('[data-date]')).toHaveCount(0);
+    }
+  }
+
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
