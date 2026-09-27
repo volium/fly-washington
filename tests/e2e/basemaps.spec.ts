@@ -24,7 +24,7 @@ test('changing appearance preserves map position, airport selection, and an unfi
   await page.getByRole('searchbox', { name: 'Search airports' }).fill('Skagit');
   await page.getByRole('button', { name: 'Show all matches' }).click();
   await page.locator('[data-airport="KBVS"]').click();
-  await page.getByLabel('Notes', { exact: false }).fill('Still writing this visit');
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Still writing this visit');
 
   const marker = page.locator('.airport-map-hit[title^="BVS "]');
   const position = await marker.boundingBox();
@@ -32,7 +32,7 @@ test('changing appearance preserves map position, airport selection, and an unfi
   await expect(marker).toHaveClass(/is-selected/);
   await expect(page.getByLabel('Notes', { exact: false })).toHaveValue('Still writing this visit');
   expect(await marker.boundingBox()).toEqual(position);
-  await page.getByRole('button', { name: 'Save check-in' }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(marker).toHaveClass(/is-visited/);
   await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('light');
   await expect(marker).toHaveClass(/is-selected.*is-visited/);

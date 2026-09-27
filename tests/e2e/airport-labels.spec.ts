@@ -9,7 +9,7 @@ test('FAA labels are consistent while internal and ICAO identifiers remain searc
     await expect(card.locator('.airport-code')).toHaveText(label);
     await expect(page.locator(`.airport-map-hit[title^="${label} "]`)).toHaveAttribute('aria-label', new RegExp(`^${label} `));
     await card.click();
-    await expect(page.locator('#detail > .eyebrow')).toContainText(label);
+    await expect(page.locator('.airport-identity > span:first-child')).toContainText(label);
     await expect(page.locator('.airport-map-hit.is-selected .airport-tooltip')).toHaveText([label]);
     await page.getByRole('button', { name: 'All airports' }).click();
   }

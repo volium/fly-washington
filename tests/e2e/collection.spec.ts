@@ -21,6 +21,7 @@ test('native visit date fields fit narrow Passport and Explore editors', async (
   };
   expect(await date.evaluate(fits)).toBe(true);
   await row.getByRole('button', { name: 'Show on map', exact: true }).click();
+  await page.locator('#open-visit-editor').click();
   expect(await page.locator('#checkin input[type="date"]').evaluate(fits)).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
@@ -94,4 +95,66 @@ test('Explore uses official region order and alphabetical airport names', async 
   }
   await page.locator('#region').selectOption('');
   expect(await ids()).toEqual(expected.map(a => a.id));
+});
+
+test('compact airport details preserve drafts and use consistent disclosure and cancel controls', async ({ page }, testInfo) => {
+  await page.goto('/'); await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
+  if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
+  await page.locator('[data-airport="KBVS"]').click();
+  await expect(page.locator('#checkin')).toBeHidden();
+  await expect(page.locator('#visit-history')).not.toHaveAttribute('open', '');
+  await expect(page.locator('.airport-information')).not.toHaveAttribute('open', '');
+  await expect(page.locator('.airport-stamps')).not.toHaveAttribute('open', '');
+  expect(await page.locator('#detail > [data-detail-section], #detail > #open-visit-editor').evaluateAll(nodes => nodes.map(n => n.getAttribute('data-detail-section') ?? n.id))).toEqual(['information', 'stamps', 'history', 'open-visit-editor']);
+  await page.locator('.airport-stamps > summary').click();
+  await expect(page.locator('.airport-stamps')).toHaveAttribute('open', '');
+  const title = (await page.locator('#detail h2').boundingBox())!;
+  const identity = (await page.locator('.airport-identity').boundingBox())!;
+  expect(identity.y).toBeGreaterThan(title.y);
+  await page.screenshot({ path: testInfo.outputPath('compact-airport.png') });
+  await page.locator('#open-visit-editor').click();
+  await page.locator('#checkin [name="notes"]').fill('Keep my airport draft');
+  const save = (await page.locator('#checkin [type="submit"]').boundingBox())!;
+  const cancel = (await page.locator('#cancel-visit-draft').boundingBox())!;
+  expect(Math.max(cancel.x - save.x - save.width, cancel.y - save.y - save.height)).toBeGreaterThanOrEqual(11);
+  await page.locator('#cancel-visit-draft').click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('#checkin [name="notes"]')).toHaveValue('Keep my airport draft');
+  await page.locator('#close-detail').click(); await page.locator('[data-airport="KBVS"]').click();
+  await expect(page.locator('#checkin')).toBeVisible();
+  await expect(page.locator('.airport-stamps')).toHaveAttribute('open', '');
+  await expect(page.locator('#checkin [name="notes"]')).toHaveValue('Keep my airport draft');
+  await page.locator('#cancel-visit-draft').click(); await page.getByRole('button', { name: 'Discard draft', exact: true }).click();
+  await expect(page.locator('#checkin')).toBeHidden(); await expect(page.locator('#open-visit-editor')).toBeFocused();
+  await page.locator('#open-visit-editor').click(); await page.locator('#checkin [type="submit"]').click();
+  await expect(page.locator('#airport-visit-summary')).toContainText('Stamp collected');
+  await expect(page.locator('#checkin')).toBeHidden();
+  await expect(page.locator('#visit-save-confirmation')).toHaveText('Visit saved on this device.');
+  await page.locator('#close-detail').click(); await page.locator('[data-airport="KBVS"]').click();
+  await expect(page.locator('#checkin')).toBeHidden();
+  await page.locator('#visit-history').getByRole('button', { name: 'Edit', exact: true }).click();
+  await page.locator('#checkin [name="notes"]').fill('Edited saved visit');
+  await page.locator('#checkin [type="submit"]').click();
+  await expect(page.locator('#checkin')).toBeHidden();
+  await expect(page.locator('#visit-history')).toContainText('Edited saved visit');
+  await expect(page.locator('#visit-history')).toHaveAttribute('open', '');
+  await page.locator('#theme').selectOption('dark');
+  await page.screenshot({ path: testInfo.outputPath('compact-airport-editor-dark.png') });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('long stamp instructions expand without losing source text', async ({ page }, testInfo) => {
+  const airports: { id: string; stampLocations: { description: string }[] }[] = JSON.parse(readFileSync('src/program/airports.generated.json', 'utf8'));
+  const airport = airports.find(a => a.stampLocations.some(s => s.description.length > 360))!;
+  const index = airport.stampLocations.findIndex(s => s.description.length > 360);
+  await page.goto('/'); await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false');
+  if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
+  await page.locator('[data-airport="' + airport.id + '"]').click();
+  await page.locator('.airport-stamps > summary').click();
+  const stamp = page.locator('.stamp').nth(index);
+  await expect(stamp.locator('small')).toBeVisible();
+  await expect(stamp.locator('.stamp-instructions')).not.toHaveAttribute('open', '');
+  await stamp.getByText('Show full instructions', { exact: true }).click();
+  await expect(stamp.locator('.stamp-instructions p')).toHaveText(airport.stampLocations[index].description);
+  await expect(stamp.locator('.stamp-instructions p')).toBeVisible();
 });

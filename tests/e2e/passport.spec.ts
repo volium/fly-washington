@@ -15,7 +15,7 @@ test('map background clears selection while markers and map navigation preserve 
   await expect(bellingham).toHaveClass(/is-selected/);
   await expect(skagit.locator('.is-selected')).toHaveCount(0);
   await expect(page.locator('#detail')).toBeVisible();
-  await page.getByRole('button', { name: 'Save check-in' }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(bellingham).toHaveClass(/is-visited/);
 
   await map.scrollIntoViewIfNeeded();
@@ -77,9 +77,9 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await expect(page.getByRole('heading', { name: 'Skagit Regional', exact: true })).toBeVisible();
   await expect(page.locator('.stamp')).toHaveCount(1);
   await expect(page.locator('.stamp')).toContainText('Port of Skagit');
-  await page.getByLabel('Visit date').fill('2026-08-10');
-  await page.getByLabel('Notes', { exact: false }).fill('First flight <script>safe text</script>');
-  await page.getByRole('button', { name: 'Save check-in' }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Visit date').fill('2026-08-10');
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('First flight <script>safe text</script>');
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expect(page.locator('.airport-map-hit.is-visited')).toHaveCount(1);
   await expect(skagitMarker).toHaveAttribute('aria-label', /, visited$/);
@@ -88,8 +88,8 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
   await expect(page.locator('.history')).toContainText('First flight <script>safe text</script>');
-  await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  await page.getByLabel('Notes', { exact: false }).fill('Updated visit');
+  if (await page.locator('#visit-history').getAttribute('open') === null) await page.locator('#history-heading').click(); await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Updated visit');
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.locator('.history')).toContainText('Updated visit');
   await page.getByRole('button', { name: 'All airports' }).click();
@@ -100,7 +100,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   const path = testInfo.outputPath('passport.json'); await download.saveAs(path);
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /BVS.*Skagit Regional/ }).click();
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  if (await page.locator('#visit-history').getAttribute('open') === null) await page.locator('#history-heading').click(); await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete visit', exact: true }).click();
   await expect(page.locator('.history article')).toHaveCount(0);
   await page.getByRole('button', { name: 'All airports' }).click();
@@ -156,7 +156,7 @@ test('an open app saves visits offline without caching map tiles', async ({ page
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /ORS.*Orcas Island/ }).click();
-  await page.getByRole('button', { name: 'Save check-in' }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expectNoCachedMapTiles(page);
   await context.setOffline(false);
@@ -182,7 +182,7 @@ test('installed app shell reloads and saves visits offline', async ({ page, cont
   await expect(page.getByRole('heading', { name: 'Fly Washington', exact: true })).toBeVisible();
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('#airport-list').getByRole('button', { name: /ORS.*Orcas Island/ }).click();
-  await page.getByRole('button', { name: 'Save check-in' }).click();
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('.history article')).toHaveCount(1);
   await expectNoCachedMapTiles(page);
 });

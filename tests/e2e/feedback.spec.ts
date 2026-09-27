@@ -1,26 +1,21 @@
 import { expect, test } from './fixtures';
 
-test('visit feedback disables saving and collapses deleted history without replacing the form', async ({ page }, testInfo) => {
+test('successful saves close the editor, expire feedback, and preserve later drafts during deletion', async ({ page }, testInfo) => {
   await page.goto('/');
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button', { name: 'List', exact: true }).click();
   await page.locator('[data-airport="KBVS"]').click();
-  await page.getByLabel('Notes', { exact: false }).fill('Retain this visit during confirmation');
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Retain this visit during confirmation');
   const button = page.locator('#checkin button[type="submit"]');
-  const before = await button.boundingBox();
   await button.click();
-  await expect(button).toHaveText('Visit saved');
-  await expect(button).toBeDisabled();
-  const saved = await button.boundingBox();
-  expect(saved!.width).toBe(before!.width);
-  expect(saved!.height).toBe(before!.height);
+  await expect(page.locator('#checkin')).toBeHidden();
+  await expect(page.locator('#visit-save-confirmation')).toHaveText('Visit saved on this device.');
+  await expect(page.locator('#open-visit-editor')).toBeFocused();
   await page.locator('#checkin').evaluate(form => (form as HTMLFormElement).requestSubmit());
   await expect(page.locator('.history article')).toHaveCount(1);
-  await expect(page.locator('#notice')).toBeEmpty();
-  await expect(button).toHaveText('Save check-in', { timeout: 6000 });
-  await expect(button).toBeEnabled();
-  await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished draft');
+  await expect(page.locator('#visit-save-confirmation')).toBeEmpty({ timeout: 7000 });
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished draft');
   const form = await page.locator('#checkin').elementHandle();
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  if (await page.locator('#visit-history').getAttribute('open') === null) await page.locator('#history-heading').click(); await page.getByRole('button', { name: 'Delete', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete visit', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Visit deleted', exact: true })).toBeDisabled();
   await expect(page.locator('.history')).toContainText('Retain this visit during confirmation');

@@ -79,7 +79,7 @@ test('desktop map stays fully visible while details scroll and passport preserve
   const map = page.locator('.map-section');
   const bounds = (await map.boundingBox())!;
   await page.locator('[data-airport="KBVS"]').click();
-  await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished visit');
+  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished visit');
   await page.locator('#detail').evaluate(element => { element.scrollTop = element.scrollHeight; });
   expect(await map.boundingBox()).toEqual(bounds);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
