@@ -30,7 +30,7 @@ test('complete downloaded map survives a cold offline tab and keeps visits separ
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button',{name:'Map',exact:true}).click();
   const openRequests: string[] = [];
   page.on('request', r => { if (/\/maps\//.test(r.url())) openRequests.push(r.url()); });
-  await page.getByRole('combobox',{name:'Appearance',exact:true}).selectOption('dark');
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
   await expect(page.locator('#map')).toHaveAttribute('data-basemap-theme','dark');
   await expect(page.locator('#map')).toHaveAttribute('data-basemap-state','ready');
   expect(openRequests).toEqual([]);
@@ -50,7 +50,7 @@ test('complete downloaded map survives a cold offline tab and keeps visits separ
   await expect(cold.locator('.airport-map-hit')).toHaveCount(115);
   await expect(cold.locator('#map-status')).toContainText('Map available on this device',{timeout:60000});
   await expect(cold.locator('#map')).toHaveAttribute('data-basemap-state','ready',{timeout:30000});
-  await cold.getByRole('combobox',{name:'Appearance',exact:true}).selectOption('dark');
+  await expect(cold.getByRole('button', {name:'Switch to light appearance',exact:true})).toBeVisible();
   await expect(cold.locator('#map')).toHaveAttribute('data-basemap-theme','dark');
   await expect(cold.locator('#map')).toHaveAttribute('data-basemap-state','ready');
   await cold.screenshot({path:testInfo.outputPath('cold-offline-map.png')});

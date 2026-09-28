@@ -151,7 +151,9 @@ test('compact airport details preserve drafts and use consistent disclosure and 
   await expect(page.locator('#checkin')).toBeHidden();
   await expect(page.locator('#visit-history')).toContainText('Edited saved visit');
   await expect(page.locator('#visit-history')).toHaveAttribute('open', '');
-  await page.locator('#theme').selectOption('dark');
+  if (testInfo.project.name.startsWith('mobile')) await page.locator('#close-detail').click();
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
+  if (testInfo.project.name.startsWith('mobile')) await page.locator('[data-airport="KBVS"]').click();
   await page.screenshot({ path: testInfo.outputPath('compact-airport-editor-dark.png') });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

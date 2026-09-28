@@ -3,14 +3,15 @@ test('local vector basemap follows saved appearance', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', r => requests.push(r.url()));
   await page.goto('/');
-  const appearance = page.getByRole('combobox', { name: 'Appearance', exact: true });
+  const appearance = page.locator('#appearance-trigger');
   await expect(page.locator('.airport-map-hit')).toHaveCount(115);
-  await appearance.selectOption('dark');
+  await page.getByRole('button',{name:'Switch to dark appearance',exact:true}).click();
   await expect.poll(() => requests.some(url => url.endsWith('/dark.json'))).toBe(true);
   await expect(page.locator('.maplibregl-ctrl-attrib')).toContainText('OpenStreetMap');
   await page.reload();
-  await expect(appearance).toHaveValue('dark');
-  await appearance.selectOption('system');
+  await expect(appearance).toHaveAttribute('title','Switch to light appearance');
+  await page.evaluate(() => localStorage.removeItem('passport:fly-washington:theme'));
+  await page.reload();
   await page.emulateMedia({colorScheme:'light'});
   await expect(page.locator('html')).toHaveAttribute('data-theme','light');
   await page.emulateMedia({colorScheme:'dark'});
@@ -28,13 +29,13 @@ test('changing appearance preserves map position, airport selection, and an unfi
 
   const marker = page.locator('.airport-map-hit[title^="BVS "]');
   const position = await marker.boundingBox();
-  await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('dark');
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
   await expect(marker).toHaveClass(/is-selected/);
   await expect(page.getByLabel('Notes', { exact: false })).toHaveValue('Still writing this visit');
   expect(await marker.boundingBox()).toEqual(position);
   if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button', { name: 'Save check-in' }).click();
   await expect(marker).toHaveClass(/is-visited/);
-  await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('light');
+  await page.getByRole('button', {name:'Switch to light appearance',exact:true}).click();
   await expect(marker).toHaveClass(/is-selected.*is-visited/);
   await expect(page.locator('.history')).toContainText('Still writing this visit');
 });
@@ -45,7 +46,7 @@ test('appearance remains usable without preference storage', async ({ page }) =>
     Storage.prototype.setItem = () => { throw Error('Unavailable'); };
   });
   await page.goto('/');
-  await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('dark');
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
   await expect(page.locator('.airport-map-hit')).toHaveCount(115);
 });

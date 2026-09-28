@@ -55,11 +55,11 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
 
   await expect(page.locator('#map')).toHaveClass(/compact-markers/);
   await expect(page.locator('.region-card')).toHaveCount(7);
-  await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await page.getByLabel('Appearance', { exact: true }).selectOption('light');
+  await page.getByRole('button', {name:'Switch to light appearance',exact:true}).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByRole('searchbox', { name: 'Search airports' }).fill('skagit');
@@ -113,7 +113,7 @@ test('map, themes, filters, visits, persistence, and backup work on desktop and 
   await page.getByRole('combobox', { name: 'Passport', exact: true }).selectOption('visited');
   await expect(page.locator('.airport-card')).toHaveCount(1);
   await page.screenshot({ path: testInfo.outputPath('passport-light.png'), fullPage: true });
-  await page.getByLabel('Appearance', { exact: true }).selectOption('dark');
+  await page.getByRole('button', {name:'Switch to dark appearance',exact:true}).click();
   await page.screenshot({ path: testInfo.outputPath('passport-dark.png'), fullPage: true });
 });
 
