@@ -5,7 +5,11 @@ import '@passport/core/styles.css';
 import { flyWashingtonProgram } from './program/program';
 
 const app = new PassportApp({ program: flyWashingtonProgram, offlineShellReady, installationGuidance });
-app.mount('#app').catch(() => {
+app.mount('#app').then(() => {
+  if (import.meta.env.DEV || import.meta.env.VITE_HEADER_PREVIEW === '1') {
+    void import('./header-preview').then(({ installHeaderPreview }) => installHeaderPreview()).catch(error => console.warn('Header preview unavailable', error));
+  }
+}).catch(() => {
   document.querySelector('#app')!.textContent = 'The passport could not start. Reload this page and check that your browser permits local storage.';
 });
 if (import.meta.hot) import.meta.hot.dispose(() => void app.destroy());
