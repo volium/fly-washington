@@ -1,3 +1,4 @@
+import { openManualVisit } from './fixtures';
 import { readFileSync } from 'node:fs';
 import { expect, test } from './fixtures';
 
@@ -9,8 +10,8 @@ test('native visit date fields fit narrow Passport and Explore editors', async (
   await page.locator('[data-key="region:northwest"] > summary').click();
   const row = page.locator('[data-stamp="KBVS"]');
   await row.locator('[data-details]').click();
-  await page.locator('#open-visit-editor').click();
-  const date = page.locator('#checkin').getByLabel('Visit date');
+  await openManualVisit(page);
+  const date = page.locator('#gps-form').getByLabel('Visit date');
   await date.fill('2026-09-10');
   await expect(date).toHaveValue('2026-09-10');
   const fits = (element: HTMLElement) => {
@@ -20,10 +21,12 @@ test('native visit date fields fit narrow Passport and Explore editors', async (
     return field.left >= label.left - 1 && field.right <= label.right + 1 && field.right <= form.right + 1;
   };
   expect(await date.evaluate(fits)).toBe(true);
+  await page.locator('.gps-checkin [data-close]').click();
   await page.locator('#close-detail').click();
   await row.locator('[data-details]').click();
-  await expect(page.locator('#checkin')).toBeVisible();
-  expect(await page.locator('#checkin input[type="date"]').evaluate(fits)).toBe(true);
+  await openManualVisit(page);
+  await expect(page.locator('#gps-form')).toBeVisible();
+  expect(await page.locator('#gps-form input[type="date"]').evaluate(fits)).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
@@ -72,12 +75,12 @@ test('earlier visit can retain its stamp date in the packaged mobile and desktop
   await page.locator('#passport-tab').click();
   await page.locator('[data-key="region:northwest"] > summary').click();
   await page.locator('[data-details="KBVS"]').click(); const row = page.locator('#detail');
-  await page.locator('#open-visit-editor').click();
-  await row.getByLabel('Visit date').fill('2026-09-10'); await row.getByRole('button', { name: 'Save check-in' }).click();
+  await openManualVisit(page);
+  await page.locator('#gps-form').getByLabel('Visit date').fill('2026-09-10'); await page.locator('#gps-form').getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.locator('#airport-visit-summary')).toContainText('2026-09-10');
-  await row.getByRole('button', { name: 'Add another visit' }).click();
-  await row.getByLabel('Visit date').fill('2026-09-08'); await row.getByLabel('Notes').fill('Before stamp collection');
-  await row.getByRole('button', { name: 'Save check-in' }).click();
+  await openManualVisit(page);
+  await page.locator('#gps-form').getByLabel('Visit date').fill('2026-09-08'); await page.locator('#gps-form').getByLabel('Notes').fill('Before stamp collection');
+  await page.locator('#gps-form').getByRole('button', { name: 'Save check-in' }).click();
   await expect(page.getByRole('dialog', { name: 'Earlier visit and stamp collection', exact: true })).toContainText('2026-09-10');
   await expect(page.getByRole('dialog', { name: 'Earlier visit and stamp collection', exact: true })).toContainText('2026-09-08');
   await page.screenshot({ path: testInfo.outputPath('earlier-visit-choice.png') });
@@ -85,7 +88,7 @@ test('earlier visit can retain its stamp date in the packaged mobile and desktop
   await page.getByRole('button', { name: 'Save visit only', exact: true }).click();
   await expect(page.locator('#airport-visit-summary')).toContainText('2026-09-10');
   await expect(row).toContainText('Visit only - excluded from stamp collection');
-  await page.reload(); await page.locator('#passport-tab').click();
+  await page.reload(); await expect(page.locator('#app')).toHaveAttribute('aria-busy', 'false'); await page.locator('#passport-tab').click();
   await page.locator('[data-key="region:northwest"] > summary').click();
   await expect(page.locator('[data-stamp="KBVS"]')).toContainText('2026-09-10');
   await expect(page.locator('[data-stamp="KBVS"]')).toContainText('2 visits');
@@ -125,26 +128,21 @@ test('compact airport details preserve drafts and use consistent disclosure and 
   const identity = (await page.locator('.airport-identity').boundingBox())!;
   expect(identity.y).toBeGreaterThan(title.y);
   await page.screenshot({ path: testInfo.outputPath('compact-airport.png') });
-  await page.locator('#open-visit-editor').click();
-  await page.locator('#checkin [name="notes"]').fill('Keep my airport draft');
-  const save = (await page.locator('#checkin [type="submit"]').boundingBox())!;
-  const cancel = (await page.locator('#cancel-visit-draft').boundingBox())!;
-  expect(Math.max(cancel.x - save.x - save.width, cancel.y - save.y - save.height)).toBeGreaterThanOrEqual(11);
-  await page.locator('#cancel-visit-draft').click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Cancel', exact: true }).click();
-  await expect(page.locator('#checkin [name="notes"]')).toHaveValue('Keep my airport draft');
-  await page.locator('#close-detail').click(); await page.locator('[data-airport="KBVS"]').click();
-  await expect(page.locator('#checkin')).toBeVisible();
-  await expect(page.locator('.airport-stamps')).toHaveAttribute('open', '');
-  await expect(page.locator('#checkin [name="notes"]')).toHaveValue('Keep my airport draft');
-  await page.locator('#cancel-visit-draft').click(); await page.getByRole('button', { name: 'Discard draft', exact: true }).click();
-  await expect(page.locator('#checkin')).toBeHidden(); await expect(page.locator('#open-visit-editor')).toBeFocused();
-  await page.locator('#open-visit-editor').click(); await page.locator('#checkin [type="submit"]').click();
+  await openManualVisit(page);
+  await page.locator('#gps-form [name="notes"]').fill('Keep my airport draft');
+  await page.locator('.gps-checkin [data-close]').click();
+  await page.getByRole('dialog',{name:'Discard check-in?'}).getByRole('button',{name:'Cancel',exact:true}).click();
+  await expect(page.locator('#gps-form [name="notes"]')).toHaveValue('Keep my airport draft');
+  await page.locator('.gps-checkin [data-close]').click(); await page.getByRole('button',{name:'Discard draft',exact:true}).click();
+  await expect(page.locator('.gps-checkin')).not.toBeVisible();await expect(page.locator('#open-visit-editor')).toBeFocused();
+  await expect(page.locator('.airport-stamps')).toHaveAttribute('open','');
+  await openManualVisit(page);await page.locator('#gps-form [type="submit"]').click();
   await expect(page.locator('#airport-visit-summary')).toContainText('Stamp collected');
-  await expect(page.locator('#checkin')).toBeHidden();
+  await expect(page.locator('.gps-checkin')).not.toBeVisible();
   await expect(page.locator('#visit-save-confirmation')).toHaveText('Visit saved on this device.');
   await page.locator('#close-detail').click(); await page.locator('[data-airport="KBVS"]').click();
   await expect(page.locator('#checkin')).toBeHidden();
+  if (await page.locator('#visit-history').getAttribute('open') === null) await page.locator('#history-heading').click();
   await page.locator('#visit-history').getByRole('button', { name: 'Edit', exact: true }).click();
   await page.locator('#checkin [name="notes"]').fill('Edited saved visit');
   await page.locator('#checkin [type="submit"]').click();

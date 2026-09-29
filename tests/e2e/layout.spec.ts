@@ -1,3 +1,4 @@
+import { openManualVisit } from './fixtures';
 import { expect, test } from './fixtures';
 
 test('initial map fits every airport to the available viewport', async ({ page }, testInfo) => {
@@ -47,6 +48,8 @@ test('persistent tabs expose progress and backups and restore the explorer', asy
   if (mobile) {
     await expect(map).toBeHidden();
     await page.keyboard.press('Tab');
+    await expect(page.locator('#quick-checkin')).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(page.getByRole('button', { name: 'Export passport', exact: true })).toBeFocused();
     await page.getByRole('tab', { name: 'My passport', exact: true }).focus();
   } else {
@@ -79,7 +82,10 @@ test('desktop map stays fully visible while details scroll and passport preserve
   const map = page.locator('.map-section');
   const bounds = (await map.boundingBox())!;
   await page.locator('[data-airport="KBVS"]').click();
-  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes', { exact: false }).fill('Keep my unfinished visit');
+  await openManualVisit(page); await page.locator('#gps-form [type=submit]').click();
+  if (!await page.locator('#visit-history').getAttribute('open')) await page.locator('#history-heading').click();
+  await page.getByRole('button',{name:'Edit',exact:true}).click();
+  await page.locator('#checkin').getByLabel('Notes',{exact:false}).fill('Keep my unfinished visit');
   await page.locator('#detail').evaluate(element => { element.scrollTop = element.scrollHeight; });
   expect(await map.boundingBox()).toEqual(bounds);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
@@ -91,7 +97,7 @@ test('desktop map stays fully visible while details scroll and passport preserve
   await expect(page.getByRole('tab', { name: 'Explore', exact: true })).toBeInViewport();
   expect(await map.boundingBox()).toEqual(bounds);
   await page.getByRole('tab', { name: 'Explore', exact: true }).click();
-  await expect(page.getByLabel('Notes', { exact: false })).toHaveValue('Keep my unfinished visit');
+  await expect(page.locator('form:visible').getByLabel('Notes', { exact: false })).toHaveValue('Keep my unfinished visit');
   await expect(marker).toHaveClass(/is-selected/);
   expect(await marker.boundingBox()).toEqual(position);
   await page.screenshot({ path: testInfo.outputPath('anchored-desktop.png'), fullPage: true });

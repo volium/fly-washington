@@ -1,3 +1,4 @@
+import { openManualVisit } from './fixtures';
 import { expect, test } from './fixtures';
 
 test('complete downloaded map survives a cold offline tab and keeps visits separate', async ({ page, context, browserName }, testInfo) => {
@@ -10,8 +11,8 @@ test('complete downloaded map survives a cold offline tab and keeps visits separ
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   if (testInfo.project.name.startsWith('mobile')) await page.getByRole('button',{name:'List',exact:true}).click();
   await page.locator('[data-airport="KBVS"]').click();
-  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByLabel('Notes',{exact:false}).fill('Offline package does not own visits');
-  if (await page.locator('#open-visit-editor').isVisible()) await page.locator('#open-visit-editor').click(); await page.getByRole('button',{name:'Save check-in'}).click();
+  await openManualVisit(page); await page.locator('form:visible').getByLabel('Notes',{exact:false}).fill('Offline package does not own visits');
+  await openManualVisit(page); await page.getByRole('button',{name:'Save check-in'}).click();
   await page.getByRole('button',{name:'All airports'}).click();
   await page.locator('#offline-access').click();
   await expect(page.locator('#map-status')).toContainText('Map not downloaded');

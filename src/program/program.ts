@@ -8,6 +8,7 @@ export const flyWashingtonProgram: PassportProgram = {
   description: 'Explore Washington by air. Collect memories, one airport at a time.',
   dataNotice: '115 program-map airports · 7 regions · Sources captured September 6, 2026. Airport reference positions and runways: OurAirports. Stamp directions: program map. Progress tracks this roster, not official award validation. Verify current airport conditions and stamp access before travel; not for flight planning.',
   branding: { accent: '#256b53', eyebrow: 'PASSPORT PROGRAM', themes: { light: { accent: '#256b53', onAccent: '#ffffff' }, dark: { accent: '#76b397', onAccent: '#15271f' } } },
+  checkIn: { version: 'airport-proximity-1', radiusMeters: 2414.016, maxAccuracyMeters: 200, maxAgeMs: 30000, timeoutMs: 30000, timeZone: 'America/Los_Angeles' },
   map: createMapConfig(),
   regions, airports,
 };

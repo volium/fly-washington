@@ -2,8 +2,18 @@ import { test, expect } from '@playwright/test';
 
 test('first-use offline card stays independent and keeps installation help discoverable', async ({ page }, testInfo) => {
   await page.goto('/');
+  await expect(page.locator('#app')).toHaveAttribute('aria-busy','false');
   const card = page.locator('#offline-card');
   await expect(card).toBeVisible();
+  expect(await card.evaluate(el => el.matches(':modal'))).toBe(true);
+  await page.locator('#passport-tab').evaluate(el => (el as HTMLElement).focus());
+  expect(await card.evaluate(el => el.contains(document.activeElement))).toBe(true);
+  await page.locator('#offline-close').focus();
+  await page.keyboard.press('Shift+Tab');
+  // Native dialogs may move backward focus into browser chrome (body), never background controls.
+  expect(await card.evaluate(el => document.activeElement === document.body || el.contains(document.activeElement))).toBe(true);
+  await page.keyboard.press('Tab');
+  expect(await card.evaluate(el => el.contains(document.activeElement))).toBe(true);
   const help = page.locator('#offline-setup details');
   await help.locator('summary').click();
   await expect(help).toHaveAttribute('open', '');
